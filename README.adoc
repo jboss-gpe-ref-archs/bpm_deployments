@@ -7,12 +7,18 @@ image::doc/images/rhheader.png[width=900]
 :numbered!:
 
 == PURPOSE:
-* sentence or 
-* two on the purpose of this ref arch
+The purpose of the reference architecture is to do a deep dive into BPM Suite 6 deployment topics of interest. 
+The topics addressed are based on need or partner requests.  The following topics are covered or planned:
+
+* kie-scanner
+* upcoming deployment descriptor (that allows for in-memory kiesession)
 
 == OVERVIEW:
-short paragraph 
+In BRMS 5.x, processes were stored in packages produced by Guvnor and then downloaded by jbpm console for execution using the  Knowledge Agent. 
 
-or two that highlights what the reader is going to learn.  It's nice to have a high-level overview of the data flow and deployment architecture ... although avoid too many details at this point.
+BPM Suite 6, moves away from proprietary packages in favor of, well known and mature, Apache Maven based packaging, known as knowledge archives or kjar. 
+Business assets, such as process definitions, rules, java classes, etc. are now part of a simple jar file built and managed by Maven. 
+A kjar can have defined dependencies on other Maven artifacts including other kjars. 
 
-This section should also link to the {ref_arch_doc}.
+The Maven archive structure opens up new deployment options in BPM Suite 6.  Many of these options are explained in the documentation for this
+reference architecture found in the {ref_arch_doc}.

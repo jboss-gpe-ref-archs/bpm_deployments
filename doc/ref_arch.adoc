@@ -6,18 +6,43 @@ image::images/rhheader.png[width=900]
 
 :numbered!:
 [abstract]
-== JBoss GPE Reference Architecture:  Template
+== BPM Suite 6 Deployment
 
 :numbered:
 
-== Abstract
-
 == Overview
+The purpose of the reference architecture is to do a deep dive into BPM Suite 6 deployment topics of interest. 
+The topics addressed are based on need or partner requests. The following topics are covered or planned:
+
+* kie-scanner
+* upcoming deployment descriptor (that allows for in-memory kiesession)
 
 == Pre-Requisites
 
-== Procedure
+
+== Deployment Options
+
+
+== Kie Scanner Cababilities
+
+
+== Kie Scanner and ZooKeeper
+
+
+== Kie Scanner Project Introduction
+
+
+=== Procedure
 * For the purposes of this documentation, the name _$REF_ARCH_HOME_ refers to the root directory of this reference architecture.
+
+==== Step A
+
+
+==== Step B
+
+
+==== Step C
+
 
 == Performance Testing
 * JMeter is used to drive testing of the reference architecture.
