@@ -14,39 +14,69 @@ image::images/rhheader.png[width=900]
 The purpose of the reference architecture is to do a deep dive into BPM Suite 6 deployment topics of interest. 
 The topics addressed are based on need or partner requests. The following topics are covered or planned:
 
-* kie-scanner
-* upcoming deployment descriptor (that allows for in-memory kiesession)
+* kie-Scanner
+* Continuous Integration Deployment
+* Cluster Deployment
+* Upcoming deployment descriptor (that allows for in-memory kiesession)
 
 == Pre-Requisites
 
-
 == Deployment Options
 
+== Kie-Scanner
 
-== Kie Scanner Cababilities
+=== Kie-Scanner Capabilities
 
+=== Kie Scanner and ZooKeeper
 
-== Kie Scanner and ZooKeeper
-
-
-== Kie Scanner Project Introduction
-
+=== Kie Scanner Project Introduction
 
 === Procedure
 * For the purposes of this documentation, the name _$REF_ARCH_HOME_ refers to the root directory of this reference architecture.
 
 ==== Step A
 
+==== Step B
+
+==== Step C
+
+== Continuous Integration Deployment
+
+=== CI Deployment options
+
+=== CI Deployment Project Introduction
+
+=== Procedure
+* For the purposes of this documentation, the name _$REF_ARCH_HOME_ refers to the root directory of this reference architecture.
+
+==== Step A
 
 ==== Step B
 
+==== Step C
+
+== Cluster Deployment
+
+=== Clustering BPM Suite 6
+
+=== JBoss EAP Clustering Overview
+
+=== Cluster Deployment Project Introduction
+
+=== Procedure
+* For the purposes of this documentation, the name _$REF_ARCH_HOME_ refers to the root directory of this reference architecture.
+
+==== Step A
+
+==== Step B
 
 ==== Step C
 
 
+
 == Performance Testing
 * JMeter is used to drive testing of the reference architecture.
-* You do not need to download a seperate JMeter binary nor source distribution
+* You do not need to download a separate JMeter binary nor source distribution
 * Instead, JMeter will be downloaded, installed and appropriately configured as part of the configuration found in $REF_ARCH_HOME/loadtest
 * jmeter maven plugin
 ** Notice use of the com.lazerycode.jmeter:jmeter-maven-plugin in _$REF_ARCH_HOME/loadtest/pom.xml_ 
