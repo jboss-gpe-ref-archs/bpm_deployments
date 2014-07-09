@@ -22,6 +22,51 @@ The topics addressed are based on need or partner requests. The following topics
 == Pre-Requisites
 
 == Deployment Options
+Deployments are KieModule JARs which can be deployed or undeployed.  The Business-Central application of BPM Suite 6 provides a User Interface (UI) for managing deployments.
+For many organizations, this means of deployment is only suitable for development.  Production and test environments often require more automated deployment means.
+This reference architecture describes these additional means of deploying Kie projects. 
+ 
+=== REST Deployment
+The execution server within BPM Suite 6 provides a REST API that may be used to manage deployments.
+
+Configuration options, such as the runtime strategy, should be specified when deploying the deployment: the configuration of a deployment can not be changed after it has already been deployed.
+
+.Deployment via REST template
+----------
+curl -vv -u <user-id>:<user-password> -X POST http://<host>:<port>/business-central/rest/deployment/<deployment-id>/deploy?strategy=<runtime-strategy>
+----------
+
+- *<userId>* is the application user for BPM Suite 6
+- *<user-password>* is the password for the above user
+- *<host>* is the hostname or IP address for BPM Suite 6
+- *<port>* is the port required for BPM Suite 6 (http or https port)
+- *<deployment-id>* is an expression that contains the following elements, separated by a : character:
+-- group id
+-- artifact id
+-- version
+-- (optional) kbase id
+-- (optional) ksession id
+- *<runtime-strategy>* is one of the three available runtime strategies of BPM Suite 6
+-- SINGLETON
+-- PER_PROCESS_INSTANCE
+-- PER_PROCESS
+
+The following is an example use of the REST API to deploy a Kie Module.
+
+.Deployment via REST Example
+----------
+curl -vv -u myUserId:myPassword -X POST http://localhost:8080/business-central/rest/deployment/com.redhat.gpe.refarch.bpm_signalling:processTier:1.0:bpmsignalling_base:bpmsignalling_session/deploy?strategy=PER_PROCESS_INSTANCE
+----------
+
+The REST call to undeploy a Kie project follows the same pattern, but without the strategy parameter
+
+.Un-Deployment via REST template
+----------
+curl -vv -u <user-id>:<user-password> -X POST http://<host>:<port>/business-central/rest/deployment/<deployment-id>/undeploy
+----------
+
+Curl was used in the above examples, but the REST API enables any application with http client libraries the manage deployments via REST,
+providing many options for managing deployments.
 
 == Kie-Scanner
 
