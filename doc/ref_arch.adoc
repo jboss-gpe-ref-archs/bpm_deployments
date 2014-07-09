@@ -41,15 +41,15 @@ curl -vv -u <user-id>:<user-password> -X POST http://<host>:<port>/business-cent
 - *<host>* is the hostname or IP address for BPM Suite 6
 - *<port>* is the port required for BPM Suite 6 (http or https port)
 - *<deployment-id>* is an expression that contains the following elements, separated by a : character:
--- group id
--- artifact id
--- version
--- (optional) kbase id
--- (optional) ksession id
+* group id
+* artifact id
+* version
+* (optional) kbase id
+* (optional) ksession id
 - *<runtime-strategy>* is one of the three available runtime strategies of BPM Suite 6
--- SINGLETON
--- PER_PROCESS_INSTANCE
--- PER_PROCESS
+* SINGLETON
+* PER_PROCESS_INSTANCE
+* PER_PROCESS
 
 The following is an example use of the REST API to deploy a Kie Module.
 
