@@ -65,8 +65,11 @@ The REST call to undeploy a Kie project follows the same pattern, but without th
 curl -vv -u <user-id>:<user-password> -X POST http://<host>:<port>/business-central/rest/deployment/<deployment-id>/undeploy
 ----------
 
-Curl was used in the above examples, but the REST API enables any application with http client libraries the manage deployments via REST,
+Curl was used in the above examples, but the REST API enables any application with http client libraries to manage deployments via REST,
 providing many options for managing deployments.
+
+=== Kie-Scanner Deployment
+
 
 == Kie-Scanner
 
