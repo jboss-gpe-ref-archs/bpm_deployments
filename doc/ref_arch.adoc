@@ -68,6 +68,12 @@ curl -vv -u <user-id>:<user-password> -X POST http://<host>:<port>/business-cent
 Curl was used in the above examples, but the REST API enables any application with http client libraries to manage deployments via REST,
 providing many options for managing deployments.
 
+NOTE:
+**************
+Both the /deploy and /undeploy operations are asynchronous REST operations.  This means that although each of these calls will typically return a status of 202 upon completion,
+the requested operaiton has not been completed.  So the actual operation may actually fail.
+**************
+
 === Kie-Scanner Deployment
 
 
