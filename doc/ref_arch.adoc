@@ -1,6 +1,8 @@
 :data-uri:
 :toc2:
 :rhtlink: link:https://www.redhat.com[Red Hat]
+:BZ1017327: link:https://bugzilla.redhat.com/show_bug.cgi?id=1017327[BZ1017327]
+:DROOLS-139: link:https://issues.jboss.org/browse/DROOLS-139[Drools-139]
 
 image::images/rhheader.png[width=900]
 
@@ -15,10 +17,19 @@ The purpose of the reference architecture is to do a deep dive into BPM Suite 6 
 The topics addressed are based on need or partner requests. The following topics are covered or planned:
 
 * kie-Scanner
+* KModuleDeploymentUnit
+** Comparison between KModuleDeploymentUnit and KieScanner
+*** why doesn't the Execution Server just use KIE scanner to detect the deployment / undeployment of the latest KIE jars
+* KIE module types
+** FileKieModule
+** MemoryKieModule
+** ZipKieModule
 * Continuous Integration Deployment
 * Cluster Deployment
-* Upcoming deployment descriptor (that allows for in-memory kiesession)
-* KModuleDeploymentUnit
+* {BZ1017327} - Deployment descriptor per deployment
+* {Drools-139} - Infinispan based drools and jbpm persistence
+** this has been merged in upstream community droolsjbpm-integration
+** what's the timeline for getting this in a supported release ?
 
 == Pre-Requisites
 
@@ -150,6 +161,5 @@ the requested operaiton has not been completed.  So the actual operation may act
 ** mvn clean verify
 
 == To-Do
-. Comparison between KModuleDeploymentUnit and KieScanner
-.. why doesn't the Execution Server just use KIE scanner to detect the deployment / undeployment of the latest KIE jars
+
 =======
