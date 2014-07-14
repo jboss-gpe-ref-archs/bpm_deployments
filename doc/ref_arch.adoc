@@ -104,8 +104,12 @@ the requested operaiton has not been completed.  So the actual operation may act
 
 === Cluster Deployment Project Introduction
 
-== {BZ1017327} - Deployment descriptor per deployment
-== {Drools-139} - Infinispan based drools and jbpm persistence
+== Deployment descriptor per deployment
+
+{BZ1017327}
+
+== Infinispan based drools and jbpm persistence
+** {Drools-139}
 ** this has been merged in upstream community droolsjbpm-integration
 ** what's the timeline for getting this in a supported release ?
 
