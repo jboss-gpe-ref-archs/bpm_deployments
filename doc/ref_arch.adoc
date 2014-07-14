@@ -12,33 +12,36 @@ image::images/rhheader.png[width=900]
 
 :numbered:
 
+== Pre-Requisites
 == Overview
 The purpose of the reference architecture is to do a deep dive into BPM Suite 6 deployment topics of interest. 
 The topics addressed are based on need or partner requests. The following topics are covered or planned:
 
-* kie-Scanner
-* KModuleDeploymentUnit
-** Comparison between KModuleDeploymentUnit and KieScanner
-*** why doesn't the Execution Server just use KIE scanner to detect the deployment / undeployment of the latest KIE jars
-* KIE module types
-** FileKieModule
-** MemoryKieModule
-** ZipKieModule
-* Continuous Integration Deployment
-* Cluster Deployment
-* {BZ1017327} - Deployment descriptor per deployment
-* {Drools-139} - Infinispan based drools and jbpm persistence
-** this has been merged in upstream community droolsjbpm-integration
-** what's the timeline for getting this in a supported release ?
 
-== Pre-Requisites
+
+== KIE module types
+=== FileKieModule
+=== MemoryKieModule
+=== ZipKieModule
 
 == Deployment Options
 Deployments are KieModule JARs which can be deployed or undeployed.  The Business-Central application of BPM Suite 6 provides a User Interface (UI) for managing deployments.
 For many organizations, this means of deployment is only suitable for development.  Production and test environments often require more automated deployment means.
 This reference architecture describes these additional means of deploying Kie projects. 
- 
-=== REST Deployment
+
+
+=== Kie-Scanner Deployment
+==== Kie-Scanner Capabilities
+
+=== KModuleDeploymentService
+
+image::images/kmoduledeploymentservicestack.png[]
+
+==== Comparison: KModuleDeploymentService and KieScanner
+. why doesn't the Execution Server just use KIE scanner to detect the deployment / undeployment of the latest KIE jars
+
+
+==== REST Deployment
 The execution server within BPM Suite 6 provides a REST API that may be used to manage deployments.
 
 Configuration options, such as the runtime strategy, should be specified when deploying the deployment: the configuration of a deployment can not be changed after it has already been deployed.
@@ -86,40 +89,12 @@ Both the /deploy and /undeploy operations are asynchronous REST operations.  Thi
 the requested operaiton has not been completed.  So the actual operation may actually fail.
 **************
 
-=== Kie-Scanner Deployment
-
-
-== Kie-Scanner
-
-=== Kie-Scanner Capabilities
-
-=== Kie Scanner and ZooKeeper
-
-=== Kie Scanner Project Introduction
-
-=== Procedure
-* For the purposes of this documentation, the name _$REF_ARCH_HOME_ refers to the root directory of this reference architecture.
-
-==== Step A
-
-==== Step B
-
-==== Step C
 
 == Continuous Integration Deployment
 
 === CI Deployment options
 
 === CI Deployment Project Introduction
-
-=== Procedure
-* For the purposes of this documentation, the name _$REF_ARCH_HOME_ refers to the root directory of this reference architecture.
-
-==== Step A
-
-==== Step B
-
-==== Step C
 
 == Cluster Deployment
 
@@ -129,37 +104,9 @@ the requested operaiton has not been completed.  So the actual operation may act
 
 === Cluster Deployment Project Introduction
 
-=== Procedure
-* For the purposes of this documentation, the name _$REF_ARCH_HOME_ refers to the root directory of this reference architecture.
-
-==== Step A
-
-==== Step B
-
-==== Step C
-
-
-
-== Performance Testing
-* JMeter is used to drive testing of the reference architecture.
-* You do not need to download a separate JMeter binary nor source distribution
-* Instead, JMeter will be downloaded, installed and appropriately configured as part of the configuration found in $REF_ARCH_HOME/loadtest
-* jmeter maven plugin
-** Notice use of the com.lazerycode.jmeter:jmeter-maven-plugin in _$REF_ARCH_HOME/loadtest/pom.xml_ 
-** This maven plugin downloads, installs and appropriately configures JMeter
-** This maven plugin is also used to drive test scenarios
-* ref_arch.jmx
-** A sample default jmeter load test definition file is included in: $REF_ARCH_HOME/loadtest/src/test/jmeter/ref_arch.jmx
-** This jmeter load test definition file can be viewed and manipulated via the JMeter GUI by:
-*** cd $REF_ARCH_HOME/loadtest
-** Notice that the default, OOB configuration is to spawn a single client that invokes a single test case
-** ./jmeter_gui.sh
-* Java Sampler
-** Also included is an example Java _Sampler_ at:  $REF_ARCH_HOME/loadtest/src/test/java/com/redhat/gpe/refarch/ref_arch_template/loadtest/ExampleJMeterClient.java
-** The use of a JMeter _sampler_ class is optional
-** cd $REF_ARCH_HOME/loadtest
-** mvn clean verify
+== {BZ1017327} - Deployment descriptor per deployment
+== {Drools-139} - Infinispan based drools and jbpm persistence
+** this has been merged in upstream community droolsjbpm-integration
+** what's the timeline for getting this in a supported release ?
 
 == To-Do
-
-=======
