@@ -3,7 +3,7 @@
 :rhtlink: link:https://www.redhat.com[Red Hat]
 :BZ1017327: link:https://bugzilla.redhat.com/show_bug.cgi?id=1017327[BZ1017327]
 :DROOLS-139: link:https://issues.jboss.org/browse/DROOLS-139[Drools-139]
-:execserverkiescanner: link:http://2.bp.blogspot.com/-emorAF0UQ1E/U7-2BOZlnJI/AAAAAAAAYL0/cCGLQCVLvbI/s1600/image4.png[execution server configured to use the kie scanner]
+:execserverkiescanner: link:http://2.bp.blogspot.com/-emorAF0UQ1E/U7-2BOZlnJI/AAAAAAAAYL0/cCGLQCVLvbI/s1600/image4.png[execution server is configured to use the kie scanner]
 
 image::images/rhheader.png[width=900]
 
