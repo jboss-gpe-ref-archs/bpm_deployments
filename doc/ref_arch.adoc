@@ -93,6 +93,11 @@ the requested operaiton has not been completed.  So the actual operation may act
 **************
 
 == Deploy to a Nexus repository
+"Build & Deploy" performs a "maven install" and a "maven deploy".
+Any additional repositories defined in the project's pom 
+<distributionManagement> section are honoured (with appropriate 
+authentication credentials taken from settings.xml's <repository> elements)
+
 
 . started local nexus
 . started business-central ver 6.0.2
