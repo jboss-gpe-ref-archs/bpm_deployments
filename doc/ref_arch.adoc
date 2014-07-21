@@ -32,6 +32,7 @@ This reference architecture describes these additional means of deploying Kie pr
 
 === Kie-Scanner Deployment
 ==== Kie-Scanner Capabilities
+==== org.kie.scanner.embedder.MavenEmbedder
 
 === KModuleDeploymentService
 
