@@ -125,6 +125,12 @@ authentication credentials taken from settings.xml's <repository> elements)
 . push changes to business-central repo
 . click "build and deploy" on business central,  it deploys to remote nexus repository.
 
+== Enterprise Deployment
+
+image::images/mvn_app_architecture.png
+
+Above image taken from pg 27 of link:http://www.slideshare.net/MarkProctor/drools-6-overview[mark proctor's drools overview presentation]
+
 == Continuous Integration Deployment
 
 === CI Deployment options
