@@ -3,6 +3,7 @@
 :rhtlink: link:https://www.redhat.com[Red Hat]
 :BZ1017327: link:https://bugzilla.redhat.com/show_bug.cgi?id=1017327[BZ1017327]
 :DROOLS-139: link:https://issues.jboss.org/browse/DROOLS-139[Drools-139]
+:execserverkiescanner: link:http://2.bp.blogspot.com/-emorAF0UQ1E/U7-2BOZlnJI/AAAAAAAAYL0/cCGLQCVLvbI/s1600/image4.png[execution server is configured to use the kie scanner]
 
 image::images/rhheader.png[width=900]
 
@@ -33,6 +34,8 @@ This reference architecture describes these additional means of deploying Kie pr
 === Kie-Scanner Deployment
 ==== Kie-Scanner Capabilities
 ==== org.kie.scanner.embedder.MavenEmbedder
+
+Demonstrate deployment architecture where {execserverkiescanner}
 
 === KModuleDeploymentService
 
@@ -90,6 +93,37 @@ Both the /deploy and /undeploy operations are asynchronous REST operations.  Thi
 the requested operaiton has not been completed.  So the actual operation may actually fail.
 **************
 
+== Deploy to a Nexus repository
+"Build & Deploy" performs a "maven install" and a "maven deploy".
+Any additional repositories defined in the project's pom 
+<distributionManagement> section are honoured (with appropriate 
+authentication credentials taken from settings.xml's <repository> elements)
+
+
+. start local nexus
+. start business-central ver 6.0.2
+. create project in business-central
+. clone the repo to a local environment
+. add distribuitonMagt on the pom.xml
+
++
+-----
+<distributionManagement>
+   <repository>
+      <id>deployment</id>
+      <name>Internal Releases</name>
+      <url>http://localhost:8081/nexus/content/repositories/releases/</url>
+   </repository>
+   <snapshotRepository>
+     <id>deployment</id>
+     <name>Internal Releases</name>
+     <url>http://localhost:8081/nexus/content/repositories/snapshots/</url>
+  </snapshotRepository>
+</distributionManagement>
+-----
+    
+. push changes to business-central repo
+. click "build and deploy" on business central,  it deploys to remote nexus repository.
 
 == Continuous Integration Deployment
 
