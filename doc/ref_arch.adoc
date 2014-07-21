@@ -127,7 +127,7 @@ authentication credentials taken from settings.xml's <repository> elements)
 
 == Enterprise Deployment
 
-image::images/mvn_app_architecture.png
+image::images/mvn_app_architecture.png[width=75%]
 
 Above image taken from pg 27 of link:http://www.slideshare.net/MarkProctor/drools-6-overview[mark proctor's drools overview presentation]
 
