@@ -1,6 +1,9 @@
 :data-uri:
 :toc2:
 :rhtlink: link:https://www.redhat.com[Red Hat]
+:BZ1017327: link:https://bugzilla.redhat.com/show_bug.cgi?id=1017327[BZ1017327]
+:DROOLS-139: link:https://issues.jboss.org/browse/DROOLS-139[Drools-139]
+:execserverkiescanner: link:http://2.bp.blogspot.com/-emorAF0UQ1E/U7-2BOZlnJI/AAAAAAAAYL0/cCGLQCVLvbI/s1600/image4.png[execution server is configured to use the kie scanner]
 
 image::images/rhheader.png[width=900]
 
@@ -10,23 +13,57 @@ image::images/rhheader.png[width=900]
 
 :numbered:
 
+== Pre-Requisites
 == Overview
 The purpose of the reference architecture is to do a deep dive into BPM Suite 6 deployment topics of interest. 
 The topics addressed are based on need or partner requests. The following topics are covered or planned:
 
-* kie-Scanner
-* Continuous Integration Deployment
-* Cluster Deployment
-* Upcoming deployment descriptor (that allows for in-memory kiesession)
 
-== Pre-Requisites
+
+== KIE module types
+=== FileKieModule
+=== MemoryKieModule
+=== ZipKieModule
 
 == Deployment Options
 Deployments are KieModule JARs which can be deployed or undeployed.  The Business-Central application of BPM Suite 6 provides a User Interface (UI) for managing deployments.
 For many organizations, this means of deployment is only suitable for development.  Production and test environments often require more automated deployment means.
 This reference architecture describes these additional means of deploying Kie projects. 
- 
-=== REST Deployment
+
+
+=== Kie-Scanner Deployment
+To understand Kie-Scanner deployment, Maven repositories must be discussed first.
+
+Maven can either 'mvn install' to deploy a KieModule to the local machine, where all other applications on the local machine use it. 
+Or it can 'mvn deploy' to push the KieModule to a remote Maven repository. Building the Application will pull in the KieModule and 
+populate the local Maven repository.
+
+After a KieModule is built, JARs can be deployed in one of two ways. A KieModule is either added to the classpath, like any other JAR in a Maven dependency listing, 
+or a KieModule can be dynamically loaded at runtime.  The terms `classpath deployment` and `dynamic deployment` will be used to designate these two means of loading
+a KieModule on a BPM Suite 6 server. 
+
+For classpath deployment, KIE will scan the classpath to find all the JARs with a kmodule.xml in it. Each found JAR is represented by the KieModule interface. The
+Kie-Scanner project, discussed below will provide an example of classpath deployment. 
+
+The REST Deployment, discussed below, is one exmaple of dynamic deployment. Dynamic deployment can also be done through the business-central UI.
+While dynamic modules supports side by side versioning, classpath modules do not. 
+Further once a module is on the classpath, no other version may be loaded dynamically.
+
+=== Kie Scanner Project Introduction
+==== Kie-Scanner Capabilities
+==== org.kie.scanner.embedder.MavenEmbedder
+
+Demonstrate deployment architecture where {execserverkiescanner}
+
+=== KModuleDeploymentService
+
+image::images/kmoduledeploymentservicestack.png[]
+
+==== Comparison: KModuleDeploymentService and KieScanner
+. why doesn't the Execution Server just use KIE scanner to detect the deployment / undeployment of the latest KIE jars
+
+
+==== REST Deployment
 The execution server within BPM Suite 6 provides a REST API that may be used to manage deployments.
 
 Configuration options, such as the runtime strategy, should be specified when deploying the deployment: the configuration of a deployment can not be changed after it has already been deployed.
@@ -94,56 +131,49 @@ instances:
 curl -vv -u <user-id>:<user-password> -X GET http://<host>:<port>/business-central/rest/deployment/
 ----------
 
-=== Kie-Scanner Deployment
-To understand Kie-Scanner deployment, Maven repositories must be discussed first.
-
-Maven can either 'mvn install' to deploy a KieModule to the local machine, where all other applications on the local machine use it. 
-Or it can 'mvn deploy' to push the KieModule to a remote Maven repository. Building the Application will pull in the KieModule and 
-populate the local Maven repository.
-
-After a KieModule is built, JARs can be deployed in one of two ways. A KieModule is either added to the classpath, like any other JAR in a Maven dependency listing, 
-or a KieModule can be dynamically loaded at runtime.  The terms `classpath deployment` and `dynamic deployment` will be used to designate these two means of loading
-a KieModule on a BPM Suite 6 server. 
-
-For classpath deployment, KIE will scan the classpath to find all the JARs with a kmodule.xml in it. Each found JAR is represented by the KieModule interface. The
-Kie-Scanner project, discussed below will provide an example of classpath deployment. 
-
-The REST Deployment, discussed above, is one exmaple of dynamic deployment. Dynamic deployment can also be done through the business-central UI.
-While dynamic modules supports side by side versioning, classpath modules do not. 
-Further once a module is on the classpath, no other version may be loaded dynamically.
-
-== Kie-Scanner
+== Deploy to a Nexus repository
+"Build & Deploy" performs a "maven install" and a "maven deploy".
+Any additional repositories defined in the project's pom 
+<distributionManagement> section are honoured (with appropriate 
+authentication credentials taken from settings.xml's <repository> elements)
 
 
-=== Kie-Scanner Capabilities
+. start local nexus
+. start business-central ver 6.0.2
+. create project in business-central
+. clone the repo to a local environment
+. add distribuitonMagt on the pom.xml
 
-=== Kie Scanner and ZooKeeper
++
+-----
+<distributionManagement>
+   <repository>
+      <id>deployment</id>
+      <name>Internal Releases</name>
+      <url>http://localhost:8081/nexus/content/repositories/releases/</url>
+   </repository>
+   <snapshotRepository>
+     <id>deployment</id>
+     <name>Internal Releases</name>
+     <url>http://localhost:8081/nexus/content/repositories/snapshots/</url>
+  </snapshotRepository>
+</distributionManagement>
+-----
+    
+. push changes to business-central repo
+. click "build and deploy" on business central,  it deploys to remote nexus repository.
 
-=== Kie Scanner Project Introduction
+== Enterprise Deployment
 
-=== Procedure
-* For the purposes of this documentation, the name _$REF_ARCH_HOME_ refers to the root directory of this reference architecture.
+image::images/mvn_app_architecture.png[width=75%]
 
-==== Step A
-
-==== Step B
-
-==== Step C
+Above image taken from pg 27 of link:http://www.slideshare.net/MarkProctor/drools-6-overview[mark proctor's drools overview presentation]
 
 == Continuous Integration Deployment
 
 === CI Deployment options
 
 === CI Deployment Project Introduction
-
-=== Procedure
-* For the purposes of this documentation, the name _$REF_ARCH_HOME_ refers to the root directory of this reference architecture.
-
-==== Step A
-
-==== Step B
-
-==== Step C
 
 == Cluster Deployment
 
@@ -153,38 +183,13 @@ Further once a module is on the classpath, no other version may be loaded dynami
 
 === Cluster Deployment Project Introduction
 
-=== Procedure
-* For the purposes of this documentation, the name _$REF_ARCH_HOME_ refers to the root directory of this reference architecture.
+== Deployment descriptor per deployment
 
-==== Step A
+{BZ1017327}
 
-==== Step B
-
-==== Step C
-
-
-
-== Performance Testing
-* JMeter is used to drive testing of the reference architecture.
-* You do not need to download a separate JMeter binary nor source distribution
-* Instead, JMeter will be downloaded, installed and appropriately configured as part of the configuration found in $REF_ARCH_HOME/loadtest
-* jmeter maven plugin
-** Notice use of the com.lazerycode.jmeter:jmeter-maven-plugin in _$REF_ARCH_HOME/loadtest/pom.xml_ 
-** This maven plugin downloads, installs and appropriately configures JMeter
-** This maven plugin is also used to drive test scenarios
-* ref_arch.jmx
-** A sample default jmeter load test definition file is included in: $REF_ARCH_HOME/loadtest/src/test/jmeter/ref_arch.jmx
-** This jmeter load test definition file can be viewed and manipulated via the JMeter GUI by:
-*** cd $REF_ARCH_HOME/loadtest
-** Notice that the default, OOB configuration is to spawn a single client that invokes a single test case
-** ./jmeter_gui.sh
-* Java Sampler
-** Also included is an example Java _Sampler_ at:  $REF_ARCH_HOME/loadtest/src/test/java/com/redhat/gpe/refarch/ref_arch_template/loadtest/ExampleJMeterClient.java
-** The use of a JMeter _sampler_ class is optional
-** cd $REF_ARCH_HOME/loadtest
-** mvn clean verify
+== Infinispan based drools and jbpm persistence
+** {Drools-139}
+** this has been merged in upstream community droolsjbpm-integration
+** what's the timeline for getting this in a supported release ?
 
 == To-Do
-. resolve this problem
-. resolve that problem
-=======
