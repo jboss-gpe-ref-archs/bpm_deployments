@@ -51,6 +51,17 @@ curl -vv -u <user-id>:<user-password> -X POST http://<host>:<port>/business-cent
 * PER_PROCESS_INSTANCE
 * PER_PROCESS
 
+[NOTE]
+.Runtime Strategies
+==========
+The session strategies have corresponding CDI annotations of @Singleton, @PerProcessInstance and @PerRequest. 
+Their names refer to how the session context is managed. 
+
+- `SINGLETON` maintains a single session context across all requests  
+- `PER_PROCESS_INSTANCE` keeps session (context) for a process instance 
+- `PER_PROCESS` is just stateless, no state is kept
+==========
+
 The following is an example use of the REST API to deploy a Kie Module.
 
 .Deployment via REST Example
@@ -68,16 +79,41 @@ curl -vv -u <user-id>:<user-password> -X POST http://<host>:<port>/business-cent
 Curl was used in the above examples, but the REST API enables any application with http client libraries to manage deployments via REST,
 providing many options for managing deployments.
 
-NOTE:
-**************
+[WARNING]
+.Deploy and Undeploy are asynchronous
+==========
 Both the /deploy and /undeploy operations are asynchronous REST operations.  This means that although each of these calls will typically return a status of 202 upon completion,
 the requested operaiton has not been completed.  So the actual operation may actually fail.
-**************
+==========
+
+To determine that the REST call completed the deployment or undeployment call, use a REST, GET operation call to `/deployment/` to return a list of all available deployed
+instances:
+
+.Check the list of deployments
+----------
+curl -vv -u <user-id>:<user-password> -X GET http://<host>:<port>/business-central/rest/deployment/
+----------
 
 === Kie-Scanner Deployment
+To understand Kie-Scanner deployment, Maven repositories must be discussed first.
 
+Maven can either 'mvn install' to deploy a KieModule to the local machine, where all other applications on the local machine use it. 
+Or it can 'mvn deploy' to push the KieModule to a remote Maven repository. Building the Application will pull in the KieModule and 
+populate the local Maven repository.
+
+After a KieModule is built, JARs can be deployed in one of two ways. A KieModule is either added to the classpath, like any other JAR in a Maven dependency listing, 
+or a KieModule can be dynamically loaded at runtime.  The terms `classpath deployment` and `dynamic deployment` will be used to designate these two means of loading
+a KieModule on a BPM Suite 6 server. 
+
+For classpath deployment, KIE will scan the classpath to find all the JARs with a kmodule.xml in it. Each found JAR is represented by the KieModule interface. The
+Kie-Scanner project, discussed below will provide an example of classpath deployment. 
+
+The REST Deployment, discussed above, is one exmaple of dynamic deployment. Dynamic deployment can also be done through the business-central UI.
+While dynamic modules supports side by side versioning, classpath modules do not. 
+Further once a module is on the classpath, no other version may be loaded dynamically.
 
 == Kie-Scanner
+
 
 === Kie-Scanner Capabilities
 
