@@ -44,12 +44,12 @@ Each Kie Module within a Kie Repository is identified by a *ReleaseId*, which is
 Group Id, Artifact Id, and Version number properties.
 
 === KIE Module Types
-Depending on the source of the assets, Kie Modules are loaded using one of the following Kie Module Type handlers.
+Depending on the source of the assets, Kie Modules are loaded (and Deployment Units are created) using one of the following Kie Module Type handlers.
 
 ==== MemoryKieModule handler
-When the _Build & Deploy_ button is pressed in the _Project Editor_ panel of BPM Console on a KIE project, all of the updated artifacts in the project are compiled in an incremental build and loaded by a *MemoryKieModule*.
+When the _Build & Deploy_ button is pressed in the _Project Editor_ panel of BPM Console on a KIE project, all of the updated artifacts in the project are compiled in an incremental build and loaded by a *MemoryKieModule* handler.
 The resultant KJar is subsequently deployed to a Maven repository (ie: either local or a remote maven repo such as Nexus).  
-The MemoryKieModule also provides a console log entry similar to the following:
+The MemoryKieModule handler logs an entry similar to the following:
 
 --------
 INFO   [org.drools.compiler.kie.builder.impl.KieRepositoryImpl] KieModule was added:MemoryKieModule[ ReleaseId=com.redhat.gpe.refarch.bpm_signalling:processTier:1.0]
@@ -62,11 +62,14 @@ In some scenarios, a KIE project has already been built and only a new deploymen
 Potential reasons for this scenario could be as follows:
 
 . Deployment to a production environment
+
 The production environment does not include the design-time functionality of BPM Console.
 It only includes the runtime Execution Server.
 The KIE project has already been built in a different environment via either the BPM Console, at the command line or via a Continouos Integration server.
+The resultant KIE jar has already been pushed to either the maven repo or BPM artifact repo of the production environment.
 
 . Deployment unit settings need to change
+
 The KIE project has already been built and deployed however the settings of the deployment unit need to change (ie:  KIE session strategy needs to change from PER_PROCESS_INSTANCE to SINGLETON)
 
 In these scenarios, *ZipKieModule* functionality is utilized.
@@ -82,11 +85,10 @@ file=/Users/RHAdmin/RedHat/JBoss/supported/bpms602GA/jboss-eap-6.1/standalone/tm
 --------
 
 Notice that the log entry contains the ReleaseId for the Kie Module along with the file location from where the jar was loaded.
-However, not all KieModule are built directly from jar files.
 
 
 If the target KIE jar is not already in the maven repository, then the KIE jar will be automatically copied (via KieRepositoryScanner functionality) to the maven repository from the local BPM artifact repository.
-If the target KIE jar is not in either the maven repository or the BPM artifact repository, ZipKieModule will throw an exception.
+If the target KIE jar is not in either the maven repository or the BPM artifact repository, the ZipKieModule handler will throw an exception.
 
 ==== File Kie Module handler
 The File Kie Module is the least common of the three types of KIE module types.
