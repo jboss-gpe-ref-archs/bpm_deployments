@@ -62,14 +62,14 @@ In some scenarios, a KIE project has already been built and only a new deploymen
 Potential reasons for this scenario could be as follows:
 
 . Deployment to a production environment
-
++
 The production environment does not include the design-time functionality of BPM Console.
 It only includes the runtime Execution Server.
 The KIE project has already been built in a different environment via either the BPM Console, at the command line or via a Continouos Integration server.
 The resultant KIE jar has already been pushed to either the maven repo or BPM artifact repo of the production environment.
 
 . Deployment unit settings need to change
-
++
 The KIE project has already been built and deployed however the settings of the deployment unit need to change (ie:  KIE session strategy needs to change from PER_PROCESS_INSTANCE to SINGLETON)
 
 In these scenarios, *ZipKieModule* functionality is utilized.
