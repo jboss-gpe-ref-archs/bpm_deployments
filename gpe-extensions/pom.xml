@@ -3,12 +3,13 @@
   <modelVersion>4.0.0</modelVersion>
 
   <groupId>com.redhat.gpe.refarch.bpm_deployment</groupId>
-  <artifactId>parent</artifactId>
+  <artifactId>gpe-extensions</artifactId>
   <packaging>pom</packaging>
   <version>1.0</version>
 
   <modules>
-    <module>gpe-extensions</module>
+    <module>gpe-common</module>
+    <module>gpe-kie-remote</module>
   </modules>
 
 
