@@ -117,7 +117,7 @@ curl -v -u jboss:brms -X GET <server-url>/business-central/rest/GPEKieResource/<
 ** Replace <project-GAV> with the actual GAV of your project
 
 The HTTP response payload from invoking the new RESTful resource should include a list of ids (in JSON array format) of BPMN2 processes that have been registered with the KieBase corresponding to your Kie Project.
-This process Ids should correspond with what was identified in step #3.
+These process Ids should correspond with what was identified in step #2.
 
 
 
