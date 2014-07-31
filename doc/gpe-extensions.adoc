@@ -2,6 +2,7 @@
 :toc2:
 :bpmproduct: link:https://access.redhat.com/site/documentation/en-US/Red_Hat_JBoss_BPM_Suite/[Red Hat's BPM Suite 6 product]
 :dockerbpms: link:https://github.com/jboss-gpe-ose/docker_bpms/blob/master/doc/userguide.adoc[docker_bpms]
+:osebpms: link:https://github.com/jboss-gpe-ose/openshift-origin-cartridge-bpms-full/blob/master/doc/cart_doc.adoc[OpenShift BPM cartridge]
 image::images/rhheader.png[width=900]
 
 :numbered!:
@@ -11,13 +12,13 @@ image::images/rhheader.png[width=900]
 :numbered:
 
 == Overview
-The purpose of this portion of the BPM Suite 6 reference architecture is to demonstrate how to extend the BPM Suite 6 Exectuion Server to expose one or more functions useful during deployment and/or runtime. 
+The purpose of this portion of the *bpm_deployments* reference architecture is to demonstrate how to extend the BPM Suite 6 Execution Server to expose one or more functions useful during deployment and/or runtime. 
 
-Currently, this GPE Extensions functionality extends the BPM Suite Execution Server with the following :
+Currently, the GPE Extensions project provides the following additional functions :
 
 . *listProcesses*
 +
-Given a deploymentId, return a JSON list of ids of BPMN2 process definitions that have previously been registered with the KieBase of a deployment unit.
+Given a deploymentId, return an array (in JSON format) of ids of BPMN2 processes that have previously been registered with the KieBase of a deployment unit.
 
 
 == Pre-Requisites
@@ -28,20 +29,20 @@ Given a deploymentId, return a JSON list of ids of BPMN2 process definitions tha
 . curl
 . familiarity with {bpmproduct}
 . proficiency with basic *nix command line
-. a BPM Suite 6 run-time environment such as that provided by the {dockerbpms} project
+. a BPM Suite 6 run-time environment such as that provided by the {osebpms} or {dockerbpms} projects
 
 == Set-up
 
 === local:  Clone this reference architecture
 
-This reference architecture will be cloned in your local computer only.
-To clone this reference architecture in your local environment, execute the following:
+This reference architecture needs to be cloned in your local computer only.
+To do so, execute the following:
 
 --------
 git clone https://github.com/jboss-gpe-ref-archs/bpm_deployments.git
 --------
 
-Doing so will create a directory in your local computer called:  bpm_deployments.
+Doing so will create a directory in your local computer called:  *bpm_deployments*.
 For the purposes of this documentation, this directory will be referred to as $REF_ARCH_HOME.
 
 === local: Build the Reference Architecture
@@ -56,8 +57,8 @@ Contains a Java interface that defines functions that extend the BPM Suite 6 Exe
 Contains a CDI bean, EJB service and JAX-RS based RESTful resource.
 This functionality builds off each-other.
 The CDI bean directly extends the BPM Suite 6 Execution Server.
-The EJB service is a wrapper around the CDI bean, introduces transaction boundaries and provides a light-weight remoting API that EJB clients can choose to invoke (optional).
-The JAX-RS is a wrapper around the EJB service and exposes the BPM Suite 6 Execution Server with additional RESTful resource functions.
+The EJB service is a wrapper around the CDI bean, introduces transaction boundaries and provides a light-weight remoting API that EJB clients can invoke (optional).
+The JAX-RS is a wrapper around the EJB service and exposes GPE Extension functions as RESTful resources.
 
 To build the gpe-extensions project, execute the following:
  
@@ -67,8 +68,8 @@ To build the gpe-extensions project, execute the following:
 +
 The end result are the following jar files:
 
-. $REF_ARCH_HOME/gpe-extensions/gpe-common/target/gpe-common-deployment.jar
-. $REF_ARCH_HOME/gpe-extensions/gpe-kie-remote/target/gpe-kie-remote.jar
+** $REF_ARCH_HOME/gpe-extensions/gpe-common/target/gpe-common-deployment.jar
+** $REF_ARCH_HOME/gpe-extensions/gpe-kie-remote/target/gpe-kie-remote.jar
 
 
 === local:  deploy GPE Extension artifacts
@@ -101,10 +102,10 @@ We are now ready to test the new functionality.
 
 == *List Processes* Test
 
-.  Log into the BPM Console and BPM Suite 6 and either create or use an existing KIE project.
+.  Log into the BPM Console of BPM Suite 6 and either create or use an existing KIE project.
 .  If the KIE project does not already include BPMN2 process definitions, create a few (doesn't have to be elaborate).
 .. Make note of the Ids of your various BPMN2 processes.
-.  Deploy your KIE project via the *Build and Deploy* mechanism provided by the _Project Explorer_ panel of BPM Console.
+.  Deploy your KIE project via the *Build and Deploy* button provided by the _Project Explorer_ panel of BPM Console.
 .. Make note of the maven GroupId, ArtifactId and Version (GAV) identifier of the deployed project
 .  In your local environment, execute the following RESTful query:
 
@@ -112,10 +113,12 @@ We are now ready to test the new functionality.
 curl -v -u jboss:brms -X GET <server-url>/business-central/rest/GPEKieResource/<project-GAV>/processes
 -----
 
++
 .. Replace <server-url> with the actual URL of your remote BPM Suite 6 server
 .. Replace <project-GAV> with the actual GAV of your project
 
 The HTTP response payload from invoking the new RESTful resource should include a list of ids (in JSON array format) of BPMN2 processes that have been registered with the KieBase corresponding to your Kie Project.
+This process Ids should correspond with what was identified in step #3.
 
 
 
