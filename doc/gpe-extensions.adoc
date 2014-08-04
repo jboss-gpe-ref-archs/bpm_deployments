@@ -131,11 +131,12 @@ These process Ids should correspond with what was identified in step #2.
 . Log into the BPM Console of BPM Suite 6 and clone, build & deploy the {bpmsignalling}.
 . Start an instance of the _ConcurrentPInstanceSignal_ BPMN2 process definition.
 . Make note of the Id of the new process instance.
-. Notice that the process instance now has 3 active nodes.
+. The new process instance should have 3 active nodes:
 
 +
 image::images/concurrentpinstanceactivenodes.png[]
 
++
 . To retrieve an XML list of these active nodes, execute the following :
 
 -----
