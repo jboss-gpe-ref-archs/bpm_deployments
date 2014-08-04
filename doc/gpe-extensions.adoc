@@ -139,6 +139,7 @@ image::images/concurrentpinstanceactivenodes.png[]
 +
 . To retrieve an XML list of these active nodes, execute the following :
 
++
 -----
 curl -v -u jboss:brms -X GET <bpm-server_url>:8080/business-central/rest/GPEKieResource/com.redhat.gpe.refarch.bpm_signalling:processTier:1.0/process/activenodes/<pInstanceId>
 -----
