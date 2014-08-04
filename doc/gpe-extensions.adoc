@@ -134,7 +134,7 @@ These process Ids should correspond with what was identified in step #2.
 . Notice that the process instance now has 3 active nodes.
 
 +
-image::images/activenodes.png[]
+image::images/concurrentpinstanceactivenodes.png[]
 
 . To retrieve an XML list of these active nodes, execute the following :
 
