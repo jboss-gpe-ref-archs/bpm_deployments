@@ -16,6 +16,9 @@
 
 package org.kie.services.remote.rest;
 
+import java.io.IOException;
+import java.io.StringWriter;
+import java.io.Writer;
 import java.util.List;
 
 import javax.ejb.EJB;
@@ -27,9 +30,18 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.ResponseBuilder;
 import javax.ws.rs.core.Response.Status;
+import javax.xml.bind.JAXBContext;
+import javax.xml.bind.JAXBElement;
+import javax.xml.bind.JAXBException;
+import javax.xml.bind.Marshaller;
+import javax.xml.bind.Unmarshaller;
+import javax.xml.namespace.QName;
+import javax.xml.transform.Source;
+import javax.xml.transform.stream.StreamSource;
 
 import org.kie.remote.services.rest.graph.jaxb.ActiveNodeInfo;
 import org.kie.services.remote.IGPEKieService;
+import org.kie.services.remote.ObjectList;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -77,18 +89,51 @@ public class GPEKieResource {
     
     /**
      * sample usage :
-     *  curl -v -u jboss:brms -X GET docker_bpms:8080/business-central/rest/GPEKieResource/com.redhat.gpe.refarch.bpm_signalling:processTier:1.0/process/259
+     *  curl -v -u jboss:brms -X GET docker_bpms:8080/business-central/rest/GPEKieResource/com.redhat.gpe.refarch.bpm_signalling:processTier:1.0/process/activenodes/259
      */
     @GET
-    @Path("/{deploymentId: .*}/process/{pInstanceId: .*}")
+    @Path("/{deploymentId: .*}/process/activenodes/{pInstanceId: .*}")
     @Produces({ "application/json" })
     public Response getActiveNodeInfo(@PathParam("deploymentId") final String deploymentId, @PathParam("pInstanceId") final String pInstanceId) {
         ResponseBuilder builder = null;
         try {
-            List<ActiveNodeInfo> aNodeInfo = rProxy.getActiveNodeInfo(deploymentId, pInstanceId);
-            builder = Response.status(Status.OK);
+            List<ActiveNodeInfo> nodeInfoList = rProxy.getActiveNodeInfo(deploymentId, pInstanceId);
+            return marshalList(nodeInfoList, "activeNodeInfoList", ActiveNodeInfo.class, ObjectList.class);
         } catch(Throwable x){
             builder = Response.status(Status.INTERNAL_SERVER_ERROR);
+        }
+        return builder.build();
+    }
+
+    private Response marshalList(List marshalList, String jaxbListName, Class... jaxbTypes) {
+        ResponseBuilder builder = null;
+        if(marshalList == null || marshalList.isEmpty())
+            builder = Response.status(Status.NOT_FOUND);
+        else {
+            ObjectList pList = new ObjectList(marshalList);
+            JAXBContext jc;
+            Writer sWriter = null;
+            try {
+                jc = JAXBContext.newInstance(jaxbTypes);
+                Marshaller marshaller = jc.createMarshaller();
+                marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
+                QName qName = new QName(jaxbListName);
+                JAXBElement<ObjectList> jaxbElement = new JAXBElement<ObjectList>(qName, ObjectList.class, pList);
+                //marshaller.marshal(jaxbElement, System.out);
+                sWriter = new StringWriter();
+                marshaller.marshal(jaxbElement, sWriter);
+                builder = Response.ok(sWriter.toString());
+            } catch (JAXBException e) {
+                e.printStackTrace();
+                builder = Response.status(Status.INTERNAL_SERVER_ERROR);
+            }finally {
+                try {
+                    if(sWriter != null)
+                        sWriter.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
         }
         return builder.build();
     }

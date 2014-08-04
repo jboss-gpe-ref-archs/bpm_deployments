@@ -3,6 +3,7 @@
 :bpmproduct: link:https://access.redhat.com/site/documentation/en-US/Red_Hat_JBoss_BPM_Suite/[Red Hat's BPM Suite 6 product]
 :dockerbpms: link:https://github.com/jboss-gpe-ose/docker_bpms/blob/master/doc/userguide.adoc[docker_bpms]
 :osebpms: link:https://github.com/jboss-gpe-ose/openshift-origin-cartridge-bpms-full/blob/master/doc/cart_doc.adoc[OpenShift BPM cartridge]
+:bpmsignalling: link:https://github.com/jboss-gpe-ref-archs/bpm_signalling[BPM Signalling project]
 image::images/rhheader.png[width=900]
 
 :numbered!:
@@ -19,6 +20,11 @@ Currently, the GPE Extensions project provides the following additional function
 . *listProcesses*
 +
 Given a deploymentId, return an array (in JSON format) of ids of BPMN2 processes that have previously been registered with the KieBase of a deployment unit.
+
+. *getActiveNodeInfo*
++
+Given a deploymentId and process instance Id, return an XML list of _ActiveNodeInfo_ elements.
+This function is useful for diagraming the current state of process instances. 
 
 
 == Pre-Requisites
@@ -110,7 +116,7 @@ We are now ready to test the new functionality.
 .  In your local environment, execute the following RESTful query:
 
 -----
-curl -v -u jboss:brms -X GET <server-url>/business-central/rest/GPEKieResource/<project-GAV>/processes
+curl -v -u jboss:brms -X GET <bpm-server-url>/business-central/rest/GPEKieResource/<project-GAV>/processes
 -----
 
 ** Replace <server-url> with the actual URL of your remote BPM Suite 6 server
@@ -120,8 +126,68 @@ The HTTP response payload from invoking the new RESTful resource should include 
 These process Ids should correspond with what was identified in step #2.
 
 
+== *GetActiveNodeInfo* Test
+
+. Log into the BPM Console of BPM Suite 6 and clone, build & deploy the {bpmsignalling}.
+. Start an instance of the _ConcurrentPInstanceSignal_ BPMN2 process definition.
+. Make note of the Id of the new process instance.
+. Notice that the process instance now has 3 active nodes.
+
++
+image::images/activenodes.png[]
+
+. To retrieve an XML list of these active nodes, execute the following :
+
+-----
+curl -v -u jboss:brms -X GET <bpm-server_url>:8080/business-central/rest/GPEKieResource/com.redhat.gpe.refarch.bpm_signalling:processTier:1.0/process/activenodes/<pInstanceId>
+-----
+
+. The response body returned to the client should include a list of active node information.
+This information is needed to diagram the state of a process instance.
+
+-----
+<activeNodeInfoList>
+    <activeNodeInfo>
+        <activeNode>
+            <height>30</height>
+            <name>_974632FD-1543-423B-A670-DB4FBD181991</name>
+            <width>30</width>
+            <x>98</x>
+            <y>60</y>
+        </activeNode>
+        <diagramHeight>541</diagramHeight>
+        <diagramWidth>932</diagramWidth>
+    </activeNodeInfo>
+    <activeNodeInfo>
+        <activeNode>
+            <height>30</height>
+            <name>_165803BC-CFA0-43E6-9FC6-86DC1DA0CCEF</name>
+            <width>30</width>
+            <x>98</x>
+            <y>269</y>
+        </activeNode>
+        <diagramHeight>541</diagramHeight>
+        <diagramWidth>932</diagramWidth>
+    </activeNodeInfo>
+    <activeNodeInfo>
+        <activeNode>
+            <height>73</height>
+            <name>_83254FE3-F98F-4B22-AB5D-C5188A405121</name>
+            <width>125</width>
+            <x>159</x>
+            <y>133</y>
+        </activeNode>
+        <diagramHeight>541</diagramHeight>
+        <diagramWidth>932</diagramWidth>
+    </activeNodeInfo>
+</activeNodeInfoList>
+-----
 
 == To-Do
 
+. Include process image arrow
+. Provide javascript/CSS example of how to overlay the arrow on the process diagram given the active node information
+
 ifdef::showscript[]
+
 endif::showscript[]
