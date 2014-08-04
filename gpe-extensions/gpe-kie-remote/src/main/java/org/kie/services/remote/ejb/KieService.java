@@ -28,6 +28,7 @@ import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
 
+import org.kie.remote.services.rest.graph.jaxb.ActiveNodeInfo;
 import org.kie.services.remote.IGPEKieService;
 
 /*
@@ -46,5 +47,19 @@ public class KieService implements IGPEKieService {
 
     public List<String> listProcesses(String deploymentId) {
         return kieBean.listProcesses(deploymentId);
+    }
+    
+    
+    /*
+    Caused by: java.lang.IllegalStateException: This persistence strategy only deals with UserTransaction instances!
+	at org.jbpm.process.audit.strategy.StandaloneJtaStrategy.commitTransaction(StandaloneJtaStrategy.java:98) [jbpm-audit-6.0.3-redhat-4.jar:6.0.3-redhat-4]
+	at org.jbpm.process.audit.strategy.StandaloneJtaStrategy.leaveTransaction(StandaloneJtaStrategy.java:89) [jbpm-audit-6.0.3-redhat-4.jar:6.0.3-redhat-4]
+	at org.jbpm.process.audit.JPAAuditLogService.closeEntityManager(JPAAuditLogService.java:335) [jbpm-audit-6.0.3-redhat-4.jar:6.0.3-redhat-4]
+	at org.jbpm.process.audit.JPAAuditLogService.findProcessInstance(JPAAuditLogService.java:164) [jbpm-audit-6.0.3-redhat-4.jar:6.0.3-redhat-4]
+	at org.kie.services.remote.cdi.KieServiceBean.getActiveNodeInfo(KieServiceBean.java:79) [gpe-kie-remote.jar:1.0]
+     */
+    @TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
+    public List<ActiveNodeInfo> getActiveNodeInfo(String deploymentId, String instanceId) {
+        return kieBean.getActiveNodeInfo(deploymentId, instanceId);
     }
 }

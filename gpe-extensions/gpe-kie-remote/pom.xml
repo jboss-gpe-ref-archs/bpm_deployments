@@ -76,6 +76,10 @@ xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xs
       <artifactId>kie-ci</artifactId>
     </dependency>
     <dependency>
+      <groupId>org.jbpm</groupId>
+      <artifactId>jbpm-bpmn2</artifactId>
+    </dependency>
+    <dependency>
       <groupId>com.redhat.gpe.refarch.bpm_deployment</groupId>
       <artifactId>gpe-common</artifactId>
       <version>1.0</version>

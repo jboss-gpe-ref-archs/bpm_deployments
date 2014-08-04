@@ -18,8 +18,11 @@ package org.kie.services.remote;
 
 import java.util.List;
 
+import org.kie.remote.services.rest.graph.jaxb.ActiveNodeInfo;
+
 
 public interface IGPEKieService {
     
+    public List<ActiveNodeInfo> getActiveNodeInfo(String deploymentId, String instanceId);
     public List<String> listProcesses(String deploymentId);
 }

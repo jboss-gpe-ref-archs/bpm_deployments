@@ -17,6 +17,7 @@
 package org.kie.services.remote.rest;
 
 import java.util.List;
+
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.ws.rs.GET;
@@ -26,6 +27,8 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.ResponseBuilder;
 import javax.ws.rs.core.Response.Status;
+
+import org.kie.remote.services.rest.graph.jaxb.ActiveNodeInfo;
 import org.kie.services.remote.IGPEKieService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -44,30 +47,48 @@ public class GPEKieResource {
     
     /**
      * sample usage :
-     *  curl -v -u jboss:brms -X GET docker_bpms:8080/business-central/rest/RulesMgmtResource/com.redhat.gpe.refarch.bpm_rulesMgmt:processTier:1.0/factHandles > rulesMgmt/src/test/resources/fHandles.xml
+     *  curl -v -u jboss:brms -X GET docker_bpms:8080/business-central/rest/GPEKieResource/com.redhat.gpe.refarch.bpm_signalling:processTier:1.0/processes
      */
     @GET
     @Path("/{deploymentId: .*}/processes")
     @Produces({ "application/json" })
     public Response listProcesses(@PathParam("deploymentId") final String deploymentId) {
-    	List<String> processList = null;
-    	ResponseBuilder builder = null;
-    	try {
+        List<String> processList = null;
+        ResponseBuilder builder = null;
+        try {
             processList = rProxy.listProcesses(deploymentId);
             log.info("listProcesses() # of processes = "+processList.size());
             if(processList.size() == 0) {
-            	builder = Response.status(Status.NO_CONTENT);
+                builder = Response.status(Status.NO_CONTENT);
             } else {
-            	StringBuilder sBuilder = new StringBuilder("[");
-            	for(String processId : processList){
-            		sBuilder.append(processId);
-            		sBuilder.append(",");
-            	}
-            	sBuilder.append("]");
+                StringBuilder sBuilder = new StringBuilder("[");
+                for(String processId : processList){
+                    sBuilder.append(processId);
+                    sBuilder.append(",");
+                }
+                sBuilder.append("]");
                 builder = Response.ok(sBuilder.toString());
             }
-    	} catch(Throwable x){
-        	builder = Response.status(Status.INTERNAL_SERVER_ERROR);
+        } catch(Throwable x){
+            builder = Response.status(Status.INTERNAL_SERVER_ERROR);
+        }
+        return builder.build();
+    }
+    
+    /**
+     * sample usage :
+     *  curl -v -u jboss:brms -X GET docker_bpms:8080/business-central/rest/GPEKieResource/com.redhat.gpe.refarch.bpm_signalling:processTier:1.0/process/259
+     */
+    @GET
+    @Path("/{deploymentId: .*}/process/{pInstanceId: .*}")
+    @Produces({ "application/json" })
+    public Response getActiveNodeInfo(@PathParam("deploymentId") final String deploymentId, @PathParam("pInstanceId") final String pInstanceId) {
+        ResponseBuilder builder = null;
+        try {
+            List<ActiveNodeInfo> aNodeInfo = rProxy.getActiveNodeInfo(deploymentId, pInstanceId);
+            builder = Response.status(Status.OK);
+        } catch(Throwable x){
+            builder = Response.status(Status.INTERNAL_SERVER_ERROR);
         }
         return builder.build();
     }

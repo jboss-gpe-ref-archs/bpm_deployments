@@ -273,3 +273,5 @@ Above image taken from pg 27 of link:http://www.slideshare.net/MarkProctor/drool
 ** what's the timeline for getting this in a supported release ?
 
 == To-Do
+
+. test:  compile RESTful resource as documented here:  https://access.redhat.com/documentation/en-US/Red_Hat_JBoss_BPM_Suite/6.0/html-single/Development_Guide/index.html#URL_layout
