@@ -1,0 +1,52 @@
+:data-uri:
+:toc2:
+:bpmproduct: link:https://access.redhat.com/site/documentation/en-US/Red_Hat_JBoss_BPM_Suite/[Red Hat's BPM Suite 6 product]
+:dockerbpms: link:https://github.com/jboss-gpe-ose/docker_bpms/blob/master/doc/userguide.adoc[docker_bpms]
+:osebpms: link:https://github.com/jboss-gpe-ose/openshift-origin-cartridge-bpms-full/blob/master/doc/cart_doc.adoc[OpenShift BPM cartridge]
+:bpmsignalling: link:https://github.com/jboss-gpe-ref-archs/bpm_signalling[BPM Signalling project]
+image::images/rhheader.png[width=900]
+
+:numbered!:
+[abstract]
+== BPM Suite 6: Lean Execution Server
+
+:numbered:
+
+== Overview
+The purpose of this portion of the *bpm_deployments* reference architecture is to introduce the configuration and deployment of a lean BPM Suite 6 Execution Server suitable for a production environment. 
+In particular, the following topics will be discussed:
+
+. Archiving a mavenized KIE project in a QA/Staging environment
+. Deployment of that KIE project to a production environment by seeding the BPM Suite 6 _Artifact Repository_
+. Configuration of a BPM Suite 6 run-time configured with the Execution Server component only (ie:  no design-time functionality nor git repositories)
+. Invoking the process engine of BPM Suite 6 via the Execution Server.
+
+== Pre-Requisites
+
+. ssh client
+. maven 3.0.5 (or greater)
+. git client
+. curl
+. familiarity with {bpmproduct}
+. proficiency with basic *nix command line
+. a BPM Suite 6 run-time environment such as that provided by the {osebpms} or {dockerbpms} projects
+. zip utility
+
+== Set-up
+
+=== *QA ENV:  Zip mavenized kie project*
+
+=== *PROD ENV: Populate: BPM Suite 6 Artifact Repository*
+
+=== *PROD ENV: web-exec-server.xml*
+
+https://bugzilla.redhat.com/show_bug.cgi?id=1127032
+
+
+
+== To-Do
+
+
+ifdef::showscript[]
+
+endif::showscript[]
