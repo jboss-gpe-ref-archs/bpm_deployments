@@ -69,6 +69,7 @@ The JAX-RS is a wrapper around the EJB service and exposes GPE Extension functio
 
 To build the gpe-extensions project, execute the following:
  
+. As per the pre-reqs of this reference architecture, ensure that your local maven settings have been configured to use the {bpmmvn}.
 . cd $REF_ARCH_HOME
 . mvn clean install -DskipTests
 
