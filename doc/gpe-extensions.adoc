@@ -4,6 +4,7 @@
 :dockerbpms: link:https://github.com/jboss-gpe-ose/docker_bpms/blob/master/doc/userguide.adoc[docker_bpms]
 :osebpms: link:https://github.com/jboss-gpe-ose/openshift-origin-cartridge-bpms-full/blob/master/doc/cart_doc.adoc[OpenShift BPM cartridge]
 :bpmsignalling: link:https://github.com/jboss-gpe-ref-archs/bpm_signalling[BPM Signalling project]
+:bpmmvn: link:https://access.redhat.com/documentation/en-US/Red_Hat_JBoss_BPM_Suite/6.0/html-single/Installation_Guide/index.html#The_JBoss_Integration_Maven_Repository[provided BPM Suite 6 Maven Repositories]
 image::images/rhheader.png[width=900]
 
 :numbered!:
@@ -30,7 +31,7 @@ This function is useful for diagraming the current state of process instances.
 == Pre-Requisites
 
 . ssh client
-. maven 3.0.5 (or greater)
+. maven 3.0.5 (or greater) and configured for the {bpmmvn}
 . git client
 . curl
 . familiarity with {bpmproduct}
