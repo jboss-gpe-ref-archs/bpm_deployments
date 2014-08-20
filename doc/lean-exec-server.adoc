@@ -13,13 +13,20 @@ image::images/rhheader.png[width=900]
 :numbered:
 
 == Overview
+A BPM Suite 6 deployment suitable for development and testing environments is often different than a deployment suitable for a production environment.
+
 The purpose of this portion of the *bpm_deployments* reference architecture is to introduce the configuration and deployment of a lean BPM Suite 6 Execution Server suitable for a production environment. 
 In particular, the following topics will be discussed:
 
-. Archiving a mavenized KIE project in a QA/Staging environment
-. Deployment of that KIE project to a production environment by seeding the BPM Suite 6 _Artifact Repository_
-. Configuration of a BPM Suite 6 run-time configured with the Execution Server component only (ie:  no design-time functionality nor git repositories)
-. Invoking the process engine of BPM Suite 6 via the Execution Server.
+. *Promotion of KIE project from QA -> Prod*
++
+Mavenized KIE project from QA/Staging environment will be zipped and promoted to a prod environment 
+
+. *Run-time BPM Suite 6 Exec Server only*
++
+No BPM Suite 6 design-time functionality nor git repositories.
+
+. *Deployment via the BPM Suite 6 Execution Server*
 
 == Pre-Requisites
 
@@ -34,9 +41,44 @@ In particular, the following topics will be discussed:
 
 == Set-up
 
+Often times in a production environment, only the Execution Server component of BPM Suite 6 is needed.
+In fact, removal of design-time BPM Suite 6 components for a production environment is often a requirement for security reasons.
+
+At runtime, the BPM Suite 6 Execution Server can instantiate its _DeploymentUnits_ directly from the artifacts maintained in the server's _Artifact Repository_.
+
+Git is not needed.
+Nor is an external maven repository (such as Nexus).
+Instead, all that it is required in a production environment's BPM Suite 6 _Artifact Repository_ be populated.
+In this guide, the Artifact Repository will be populated manually.
+
 === *QA ENV:  Zip mavenized kie project*
+This section of the guide requires the following :
+
+. *Development or QA BPM Suite 6 environment*
++
+This environment should already have latest version of your KIE project that has passed all functional, unit, regression, smoke and performance tests.
+. *Artifact Repository*
++
+You will need to know where your _Artifact Repository_ is located for your Dev or QA BPM Suite 6 environment.
+The default location of your _Artifact Repository_ is in a directory called _repositories_ found from where ever BPM Suite 6 was started.
+Thus, if the BPM Suite 6 JVM was started from $JBOSS_HOME/bin, then your artifact repository would be found at:  $JBOSS_HOME/bin/repositories .
+
+The location of your artifact repository could also be dictated by the java system property:  _org.guvnor.m2repo.dir_ .
+
+Once located, zip this repository as follows:
+
+. cd /path/to/qa/artifact/repository
+. zip -r /tmp/bpm_qa_artifact_repo_final.zip kie/
+
+This zip file (found at /tmp/bpm_qa_artifact_repo_final.zip) can now be copied to your production environment using your preferred file-transfer protocol (ie:  scp, sftp, etc)
 
 === *PROD ENV: Populate: BPM Suite 6 Artifact Repository*
+Now that the zipped QA tested KIE project has been copied to the production environment, the next step is to use its contents to populate the artifact repository of your product BPM Suite 6 environment.
+Do so as follows:
+
+. cd /path/to/prod/artifact/repository
+. unzip /path/to/copied/qa/artifact/repository
+. Observe that the production artifact repository is now populated with the sub-directories starting with 'kie'
 
 === *PROD ENV: web-exec-server.xml*
 
