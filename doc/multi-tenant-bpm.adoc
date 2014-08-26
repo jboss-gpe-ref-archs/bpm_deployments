@@ -1,0 +1,70 @@
+:data-uri:
+:toc2:
+:bpmproduct: link:https://access.redhat.com/site/documentation/en-US/Red_Hat_JBoss_BPM_Suite/[Red Hat's BPM Suite 6 product]
+:dockerbpms: link:https://github.com/jboss-gpe-ose/docker_bpms/blob/master/doc/userguide.adoc[docker_bpms]
+image::images/rhheader.png[width=900]
+
+:numbered!:
+[abstract]
+== BPM Suite 6: Multi-Tenant BPM
+
+:numbered:
+
+== Overview
+A BPM Suite 6 deployment in a production environment could be potentially multi-tenant.
+Specifically, rules and BPMN2 process definitions for multiple client-organizations could potentially be managed by the same BPM Suite 6 server.
+
+The purpose of this portion of the *bpm_deployments* reference architecture is to introduce both design and run-time configurations of a multi-tenant BPM Suite 6 production environment.
+In particular, the following topics will be discussed:
+
+. *BPM multi-tenancy best practices*
++
+
+. *kie-cli-config commands*
++
+The kie-cli-config utility included in the BPM Suite 6 _Supplementary Tools_ offers various commands to manipulate the associations between application defined roles and BPM organization units, git repos and projects.
+
+This guide also includes instructions to execute a scenario that demonstrates BPM multi-tenancy.
+
+== Pre-Requisites
+
+. maven 3.0.5 (or greater)
+. git client
+. . familiarity with {bpmproduct}
+. proficiency with basic *nix command line
+. a BPM Suite 6 run-time environment such as that provided by the {dockerbpms} project
+
+== BPM Multi-Tenancy Best Practices
+
+== Intro to kie-config-cli
+Multi-tenancy in BPM Suite 6 is implemented via Role-Based Access Control (RBAC).
+User defined roles can be associated with BPM organizational units, git repositories and projects.
+These associations are created by the _kie-config-cli_ tool included with the _Supplementary Tools_ of BPM Suite 6.
+
+The *kie-config-cli* tool is a command line configuration tool that provides capabilities to manage the system repository from the command line.
+What is meant by the _system repository_ is the bare git repository leveraged by BPM Suite 6 at _<org.uberfire.nio.git.dir>/system.git_.
++
+[NOTE]
+_org.uberfire.nio.git.dir_ is a system property defining the path on local disk to all bare BPM repositories.
+In the {dockerbpms} environment, the system property org.uberfire.nio.git.dir is set by default to:  /opt/jboss_bpm_soa/jboss-eap-6.1/bpmsGit/.niogit
+
+The *kie-config-cli* tool can be used either in online or offline mode.
+
+. *Online mode* (default and recommended) 
++ on startup, the tool connects to a Git repository using a Git server provided by kie-wb. 
+All changes are made locally and published to upstream only after explicitly executing the push-changes command. 
+Use the exit command to publish local changes. 
+To discard local changes on exit, use the discard command.
+
+. *Offline mode* (a kind of installer style)
++
+creates and manipulates the system repository directly on the server (there is no discard option).
+
+== BPM Multi-Tenancy Lab Exercise
+
+== To-Do
+
+ifdef::showscript[]
+
+endif::showscript[]
+
