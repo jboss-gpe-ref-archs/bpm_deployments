@@ -42,16 +42,17 @@ User defined roles can be associated with BPM organizational units, git reposito
 These associations are created by the _kie-config-cli_ tool included with the _Supplementary Tools_ of BPM Suite 6.
 
 The *kie-config-cli* tool is a command line configuration tool that provides capabilities to manage the system repository from the command line.
-What is meant by the _system repository_ is the bare git repository leveraged by BPM Suite 6 at _<org.uberfire.nio.git.dir>/system.git_.
-+
+What is meant by the _system repository_ is the bare git repository leveraged by BPM Suite 6 at *<org.uberfire.nio.git.dir>/system.git*.
+
 [NOTE]
-_org.uberfire.nio.git.dir_ is a system property defining the path on local disk to all bare BPM repositories.
+*org.uberfire.nio.git.dir* is an optional Java system property used by BPM Suite 6 that defines the path on local disk to all bare BPM repositories.
 In the {dockerbpms} environment, the system property org.uberfire.nio.git.dir is set by default to:  /opt/jboss_bpm_soa/jboss-eap-6.1/bpmsGit/.niogit
 
 The *kie-config-cli* tool can be used either in online or offline mode.
 
 . *Online mode* (default and recommended) 
-+ on startup, the tool connects to a Git repository using a Git server provided by kie-wb. 
++ 
+on startup, the tool connects to a Git repository using a Git server provided by kie-wb. 
 All changes are made locally and published to upstream only after explicitly executing the push-changes command. 
 Use the exit command to publish local changes. 
 To discard local changes on exit, use the discard command.
