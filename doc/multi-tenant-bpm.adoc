@@ -163,7 +163,7 @@ Congradulations.  Your kie-config-cli tool is now connected in *online mode* to 
 
 === Create an *Organizational Unit and bare git repo*
 In this section of the exercise, an organizational unit and git repository will be created via the kie-config-cli tool.
-At the same kie-config-cli command prompt, execute the following:
+At the kie-config-cli command prompt, execute the following:
 
 -----
 >>>>>>>>>>>>>>>>>>>>>>>>>>>
@@ -194,13 +194,13 @@ Repository gperepo was successfully added to Organizational Unit gpe
 -----
 
 === Create multiple *KIE projects*
-Now that an organization unit of *gpe* and a BPM bare git repo of *gperepo* have been created, the next step is to create two new KIE projects.
+Now that an organizational unit of *gpe* and a BPM bare git repo of *gperepo* have been created, the next step is to create two new KIE projects.
 These new KIE projects will be version controlled in the *gperepo* git bare repository.
 The names of the two KIE projects will be:  *project1* and *project2*
 
 . KIE projects can not be created via the _kie-cli-config_ command line utility.
 Subsequently, they must be created via the BPM Console of BPM Suite 6.
-. Point your browser, to the login screen of the BPM Console and login using the 'jboss' administrator user
+. Point your browser to the login screen of the BPM Console and login using the 'jboss' administrator user
 . Navigate to:  Authoring -> Project Authoring -> New Item
 . From the drop-down list, select *Project*
 . A _Create new Project_ dialogue box will appear allowing for entry of a _Resource Name_.
@@ -295,10 +295,37 @@ Do so as follows:
     569   </security-role>
 -----
 
-=== Modify BPM Console Workbench properties
+These changes will authorize users with roles of either *p1users* and/or *p2users* with login access to the BPM Console.
 
+=== Modify BPM Console Workbench properties
+In the previous section, configuration changes were made to the business-central web artifact of BPM Suite 6 so as to authorize login access to users with application-specific roles.
+In this section, the BPM Console will be further modified to associated the *p1users* and *p2users* roles with BPM Console workbench panels typically used by a business analyst.
+Do so as follows:
+
+. ssh into your docker bpms environment, and open the following file in a command-line text editor:
+*$JBOSS_HOME/standalone/deployments/business-central.war/WEB-INF/classes/workbench-policy.properties
+. In the *Granted roles per feature* section, add the *p1users* and *p2users* roles to the list of *roles.wb_for_business_analysts*
++
+-----
+     63 roles.wb_everything=admin
+     64 roles.wb_for_developers=developer
+     65 roles.wb_for_business_analysts=analyst,p1users,p2users
+     66 roles.wb_for_business_users=user
+     67 roles.wb_for_managers=manager
+-----
+
+. Re-start your BPM Suite 6 JVM
+
+== Verify project-level multi-tenancy
+Once your BPM Suite 6 environment has been bounced, you should be able to authenticate to the BPM Console as *p1user* .
+Navigate to Authoring -> Project Authoring -> Project Explorer .
+Notice that this *p1user* should only have visibility to the *project1* KIE project.
+If interested, create and save a new BPMN2 process definition called:  *p1process* .
 
 image::images/p1projectexplorer.png[]
+
+Log out of the BPM Console and log back in as the *p2user*.
+Similar to previous, notice that this user only has visibility to the *project2* KIE projoct.
 
 image::images/p2projectexplorer.png[]
 
