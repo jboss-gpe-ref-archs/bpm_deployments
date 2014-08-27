@@ -80,6 +80,40 @@ sudo docker inspect --format='{{.NetworkSettings.IPAddress}}' <container.id>
 [NOTE]
 Substitute the above with the value of your actual docker bpms containerId.
 
+=== Create New Users / Roles in BPM ID Mgmt System
+This exercise introduces two new users associated to two new roles.
+In the default _docker bpms_ environment, user credentials are maintained in $JBOSS_HOME/standalone/configuration/application-*.properties .
+Those credentials can be modified via the $JBOSS_HOME/bin/add-user.sh script.
+
+. Create a user with id of *p1user* and role of *p1users*
++
+-----
+./bin/add-user.sh 
+
+What type of user do you wish to add? 
+ a) Management User (mgmt-users.properties) 
+ b) Application User (application-users.properties)
+(a): b
+
+Enter the details of the new user to add.
+Realm (ApplicationRealm) : 
+Username : p1user
+Password : 
+Re-enter Password : 
+What roles do you want this user to belong to? (Please enter a comma separated list, or leave blank for none)[  ]: p1users
+About to add user 'p1user' for realm 'ApplicationRealm'
+Is this correct yes/no? yes
+Added user 'p1user' to file '/opt/jboss/eap/jboss-eap-6.1/standalone/configuration/application-users.properties'
+Added user 'p1user' to file '/opt/jboss/eap/jboss-eap-6.1/domain/configuration/application-users.properties'
+Added user 'p1user' with roles p1users to file '/opt/jboss/eap/jboss-eap-6.1/standalone/configuration/application-roles.properties'
+Added user 'p1user' with roles p1users to file '/opt/jboss/eap/jboss-eap-6.1/domain/configuration/application-roles.properties'
+Is this new user going to be used for one AS process to connect to another AS process? 
+e.g. for a slave host controller connecting to the master or for a Remoting connection for server to server EJB calls.
+yes/no? no
+-----
+
+. Create a second user with id of *p2user* and role of *p2users*
+
 === Download and unzip BPM *Supplementary Tools*
 Using your Red Hat Network credentials, navigate your browser to the {bpmdownload}.
 Download the *Supplementary Tools* to your local system.
@@ -128,12 +162,145 @@ The BPM administrator credentials are :  jboss / brms
 Congradulations.  Your kie-config-cli tool is now connected in *online mode* to the remote Git Server of your docker bpms container.
 
 === Create an *Organizational Unit and bare git repo*
+In this section of the exercise, an organizational unit and git repository will be created via the kie-config-cli tool.
+At the same kie-config-cli command prompt, execute the following:
+
+-----
+>>>>>>>>>>>>>>>>>>>>>>>>>>>
+>>Please enter command (type help to see available commands):
+create-org-unit
+>>Organizational Unit name:gpe
+>>Organizational Unit owner:jboss
+>>Repositories (comma separated list):
+Result:
+Organizational Unit gpe successfully created
+>>>>>>>>>>>>>>>>>>>>>>>>>>>
+>>Please enter command (type help to see available commands): 
+create-repo
+>>Repository alias:gperepo
+>>User:
+>>Password:
+>>Remote origin:
+Result:
+Repository with alias gperepo has been successfully created
+>>>>>>>>>>>>>>>>>>>>>>>>>>>
+>>Please enter command (type help to see available commands): 
+add-repo-org-unit
+>>Organizational Unit name:gpe
+>>Repository alias:gperepo
+Result:
+Repository gperepo was successfully added to Organizational Unit gpe
+>>>>>>>>>>>>>>>>>>>>>>>>>>>
+-----
 
 === Create multiple *KIE projects*
+Now that an organization unit of *gpe* and a BPM bare git repo of *gperepo* have been created, the next step is to create two new KIE projects.
+These new KIE projects will be version controlled in the *gperepo* git bare repository.
+The names of the two KIE projects will be:  *project1* and *project2*
+
+. KIE projects can not be created via the _kie-cli-config_ command line utility.
+Subsequently, they must be created via the BPM Console of BPM Suite 6.
+. Point your browser, to the login screen of the BPM Console and login using the 'jboss' administrator user
+. Navigate to:  Authoring -> Project Authoring -> New Item
+. From the drop-down list, select *Project*
+. A _Create new Project_ dialogue box will appear allowing for entry of a _Resource Name_.
+Enter in a value of *project1*
+. A second dialogue box called _Project General Settings_ will appear.
+In the _Group ID_ text box, enter in a value of:  *com.redhat.gpe* and click _Finish_
++
+image::images/newprojsettings.png[]
+
+. Repeat this procedure to create an additional new project called: *project2*
+
+=== Associate New Roles to new KIE projects
+Now that the *project1* and *project2* KIE projects have been created through the BPM Console, application-specific roles can be assigned to those projects.
+By doing so, only thoses users with those application-specific roles will be able to see and modify those artifacts in those KIE projects.
+Roles are associated to projects using the kie-cli-config utility.
+The following demonstrates assigning a role of *p1users* to the *project1* KIE project:
 
 -----
+>>>>>>>>>>>>>>>>>>>>>>>>>>>
+>>Please enter command (type help to see available commands): 
+add-role-project
+>>Repository alias:gperepo
+>>Select project:
+1) project1
+2) project2
+1
+>>Security roles (comma separated list):p1users
+Result:
+Role p1users added successfully to project project1
 
+>>>>>>>>>>>>>>>>>>>>>>>>>>>
 -----
+
+Repeat the above to assign a role of *p2users* to the *project2* KIE project.
+
+=== Modify *Business-Central* Authorization policies
+By default, the BPM Suite 6 Business Central web archive is locked down as per security configurations found in its WEB-INF/web.xml configuration file.
+This default WEB-INF/web.xml config file needs to be modified to allow login authorization of users assigned the *p1users* and *p2users* roles to the BPM Console.
+Do so as follows:
+
+. ssh into your docker bpms environment, and open the following file in a command-line text editor:
+*$JBOSS_HOME/standalone/deployments/business-central.war/WEB-INF/web.xml*
+. In the section related to the *console* security constraints, add both the *p1users* and *p2users* roles
++
+-----
+    506   <security-constraint>
+    507     <web-resource-collection>
+    508       <web-resource-name>console</web-resource-name>
+    509       <url-pattern>/org.kie.workbench.KIEWebapp/*</url-pattern>
+    510       <url-pattern>*.erraiBus</url-pattern>
+    511     </web-resource-collection>
+    512     <auth-constraint>
+    513       <role-name>admin</role-name>
+    514       <role-name>analyst</role-name>
+    515       <role-name>developer</role-name>
+    516       <role-name>user</role-name>
+    517       <role-name>manager</role-name>
+    518       <role-name>p1users</role-name>
+    519       <role-name>p2users</role-name>
+    520     </auth-constraint>
+    521   </security-constraint>
+-----
+
+. Do the same in the section related to the *formModeler* security constraints:
++
+-----
+    523     <security-constraint>
+    524         <web-resource-collection>
+    525           <web-resource-name>formModeler</web-resource-name>
+    526           <url-pattern>/formModeler/*</url-pattern>
+    527         </web-resource-collection>
+    528         <auth-constraint>
+    529           <role-name>admin</role-name>
+    530           <role-name>analyst</role-name>
+    531           <role-name>developer</role-name>
+    532           <role-name>user</role-name>
+    533           <role-name>manager</role-name>
+    534           <role-name>p1users</role-name>
+    535           <role-name>p2users</role-name>
+    536         </auth-constraint>
+    537     </security-constraint>
+-----
+
+. Define two new *security-roles* as follows:
++
+-----
+    564   <security-role>
+    565     <role-name>p1users</role-name>
+    566   </security-role>
+    567   <security-role>
+    568     <role-name>p2users</role-name>
+    569   </security-role>
+-----
+
+=== Modify BPM Console Workbench properties
+
+
+image::images/p1projectexplorer.png[]
+
+image::images/p2projectexplorer.png[]
 
 == To-Do
 
