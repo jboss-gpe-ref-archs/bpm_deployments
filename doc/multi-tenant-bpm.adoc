@@ -332,7 +332,7 @@ Do so as follows:
 
 . Re-start your BPM Suite 6 JVM
 
-== Verify project-level multi-tenancy
+=== Verify project-level multi-tenancy
 Once your BPM Suite 6 environment has been bounced, you should be able to authenticate to the BPM Console as *p1user* .
 Navigate to Authoring -> Project Authoring -> Project Explorer .
 Notice that this *p1user* should only have visibility to the *project1* KIE project.
