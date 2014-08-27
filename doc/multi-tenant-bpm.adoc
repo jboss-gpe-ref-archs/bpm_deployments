@@ -63,7 +63,10 @@ To discard local changes on exit, use the discard command.
 creates and manipulates the system repository directly on the server (there is no discard option).
 
 == BPM Multi-Tenancy Lab Exercise
-This section of the guide will demonstrate BPM multi-tenancy.
+This section of the guide will demonstrate KIE project level multi-tenancy in BPM Suite 6.
+
+image::images/projectmultitenancy.png[]
+
 
 === Start BPM Suite 6
 Start your BPM Suite 6.0.2 environment and ensure that the Git server of BPM Console (which by default listens on port 8001) is enabled and accessible.
