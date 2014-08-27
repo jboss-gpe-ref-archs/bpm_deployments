@@ -63,7 +63,7 @@ To discard local changes on exit, use the discard command.
 +
 creates and manipulates the system repository directly on the server (there is no discard option).
 
-== BPM Multi-Tenancy Lab Exercise
+== BPM Multi-Tenancy Lab 
 This section of the guide will demonstrate project level multi-tenancy in BPM Suite 6.
 
 image::images/projectmultitenancy.png[]
@@ -132,7 +132,7 @@ yes/no? no
 
 === Download and unzip BPM *Supplementary Tools*
 Using your Red Hat Network credentials, navigate your browser to the {bpmdownload}.
-Download the *Supplementary Tools* to your local system.
+Download the *Supplementary Tools* zip file to your local system.
 
 Once completed, open a shell command terminal and unzip to your preferred location on disk:
 
@@ -179,6 +179,8 @@ Congradulations.  Your kie-config-cli tool is now connected in *online mode* to 
 
 === Create an *Organizational Unit and bare git repo*
 In this section of the exercise, an organizational unit and git repository will be created via the kie-config-cli tool.
+In addition, the new organizational unit will be made owner of the new git repository.
+
 At the kie-config-cli command prompt, execute the following:
 
 -----
