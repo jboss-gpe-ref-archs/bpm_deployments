@@ -36,6 +36,7 @@ This guide also includes instructions to execute a scenario that demonstrates BP
 . a BPM Suite 6 run-time environment such as that provided by the {dockerbpms} project
 
 == BPM Multi-Tenancy Best Practices
+To-Do
 
 == Intro to kie-config-cli
 Multi-tenancy in BPM Suite 6 is implemented via Role-Based Access Control (RBAC).
@@ -63,9 +64,21 @@ To discard local changes on exit, use the discard command.
 creates and manipulates the system repository directly on the server (there is no discard option).
 
 == BPM Multi-Tenancy Lab Exercise
-This section of the guide will demonstrate KIE project level multi-tenancy in BPM Suite 6.
+This section of the guide will demonstrate project level multi-tenancy in BPM Suite 6.
 
 image::images/projectmultitenancy.png[]
+
+At the conclusion of this exercise, your BPM Suite 6 environment will consist of the following:
+
+. *gpe* organizational unit
+. *gprepo* bare git repository
+. two KIE projects
+.. *project1*
+.. *project2*
+
+Users associated to a role of *p1users* will only have visibility to design-time artifacts in the *project1* KIE project.
+
+Users associated to a role of *p2users* will only have visibility to design-time artifacts in the *project2* KIE project.
 
 
 === Start BPM Suite 6
