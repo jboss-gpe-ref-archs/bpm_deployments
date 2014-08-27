@@ -70,8 +70,8 @@ image::images/projectmultitenancy.png[]
 
 At the conclusion of this exercise, your BPM Suite 6 environment will consist of the following:
 
-. *gpe* organizational unit
-. *gprepo* bare git repository
+. one organizational unit: *gpe*
+. one bare git repository: *gperepo*
 . two KIE projects
 .. *project1*
 .. *project2*
