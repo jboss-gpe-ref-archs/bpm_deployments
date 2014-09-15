@@ -87,7 +87,7 @@ Do so as follows using the secure copy utility:
 
 -----
 scp $REF_ARCH_HOME/gpe-extensions/gpe-common/target/gpe-common-deployment.jar  <ssh.url.to.your.bpm.environment>:~/bpms/standalone/deployments/business-central.war/WEB-INF/lib
-scp $REF_ARCH_HOME/gpe-extensions/gpe-common/target/gpe-kie-remote.jar  <ssh.url.to.your.bpm.environment>:~/bpms/standalone/deployments/business-central.war/WEB-INF/lib
+scp $REF_ARCH_HOME/gpe-extensions/gpe-kie-remote/target/gpe-kie-remote.jar  <ssh.url.to.your.bpm.environment>:~/bpms/standalone/deployments/business-central.war/WEB-INF/lib
 ----- 
 
 Afterwards, bounce your BPM Suite 6 java process.
