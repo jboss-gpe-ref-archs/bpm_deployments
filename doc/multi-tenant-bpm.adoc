@@ -12,10 +12,11 @@ image::images/rhheader.png[width=900]
 :numbered:
 
 == Overview
-A BPM Suite 6 deployment in a production environment could be potentially multi-tenant.
-Specifically, rules and BPMN2 process definitions for multiple client-organizations could potentially be managed by the same BPM Suite 6 server.
+A BPM Suite 6 deployment in a production environment could potentially be multi-tenant.
+In other words, rules and BPMN2 process definitions for multiple client-organizations could potentially be managed by the same BPM Suite 6 server.
+Users from one client-organization should only have visibility to their BPM design-time artifacts.
 
-The purpose of this portion of the *bpm_deployments* reference architecture is to introduce both design and run-time configurations of a multi-tenant BPM Suite 6 production environment.
+The purpose of this portion of the *bpm_deployments* reference architecture is to introduce an example of a multi-tenant BPM Suite 6 production environment.
 In particular, the following topics will be discussed:
 
 . *BPM multi-tenancy best practices*
@@ -34,13 +35,50 @@ This guide also includes instructions to execute a scenario that demonstrates BP
 . . familiarity with {bpmproduct}
 . proficiency with basic *nix command line
 . a BPM Suite 6 run-time environment such as that provided by the {dockerbpms} project
+. Red Hat Network userId with sufficient entitlements to download the BPM Suite 6 _Supplementary Tools_.
 
 == BPM Multi-Tenancy Best Practices
-To-Do
+=== Application defined roles
+BPM Suite 6 implements Role-Based Access Control (RBAC) to define the policies that govern visibility to BPM artifacts via the BPM Console.
+BPM Suite 6 comes stock with various pre-defined roles such as the following
+
+. *admin*
++
+Administrates the BPMS system. Has full access rights to make any changes necessary. 
+Also has the ability to add and remove users from the system.
+      
+. *developer*
++
+Implements code required for BPM artifacts to work.
+Primary tool is JBDS however users of this role may also use the web tool occasionally
+
+. *analyst*
++
+Responsible for creating and designing processes into the system.
+Creates process flows and handles process change requests.
+Needs to test processes that they create.
+Also creates forms and dashboards.
+
+. *user*
++
+Daily user of the system to take actions on business tasks that are required for the processes to continue forward.
+Works primarily with the task lists.
+
+. *manager*
++
+Viewer-only User
+Viewer of the system that is interested in statistics around the  business processes and their performance, business indicators, and other reporting of the system and people who interact with the system.
+
+In addition to these stock roles, BPM Suite 6 allows for the creation and use of *application* defined roles.
+For example, in the lab for this reference architecture, application defined roles of _p1users_ and _p2users_ will be created.
+Users with a role of _p1users_ will only have visibility to the _project1_ KIE project.
+Likewise, users with a role of _p2users_ will only have visibility to the _project2_ KIE project.
+
+For BPM Suite 6 deployments that will be providing service for multiple client organizations, it is a best practice to create your own application defined roles.
 
 == Intro to kie-config-cli
-Multi-tenancy in BPM Suite 6 is implemented via Role-Based Access Control (RBAC).
-User defined roles can be associated with BPM organizational units, git repositories and projects.
+BPM Suite 6 implements Role-Based Access Control (RBAC) to define the policies that govern visibility to BPM artifacts via the BPM Console.
+Roles can be associated with BPM organizational units, git repositories and projects.
 These associations are created by the _kie-config-cli_ tool included with the _Supplementary Tools_ of BPM Suite 6.
 
 The *kie-config-cli* tool is a command line configuration tool that provides capabilities to manage the system repository from the command line.
@@ -68,7 +106,7 @@ This section of the guide will demonstrate project level multi-tenancy in BPM Su
 
 image::images/projectmultitenancy.png[]
 
-At the conclusion of this exercise, your BPM Suite 6 environment will consist of the following:
+At the conclusion of this exercise, your BPM Suite 6 environment will consist of the following as depicted in the above diagram:
 
 . one organizational unit: *gpe*
 . one bare git repository: *gperepo*
@@ -335,6 +373,7 @@ Do so as follows:
 . Re-start your BPM Suite 6 JVM
 
 === Verify project-level multi-tenancy
+==== p1users
 Once your BPM Suite 6 environment has been bounced, you should be able to authenticate to the BPM Console as *p1user* .
 Navigate to Authoring -> Project Authoring -> Project Explorer .
 Notice that this *p1user* should only have visibility to the *project1* KIE project.
@@ -342,6 +381,7 @@ If interested, create and save a new BPMN2 process definition called:  *p1proces
 
 image::images/p1projectexplorer.png[]
 
+==== p2users
 Log out of the BPM Console and log back in as the *p2user*.
 Similar to previous, notice that this user only has visibility to the *project2* KIE projoct.
 
