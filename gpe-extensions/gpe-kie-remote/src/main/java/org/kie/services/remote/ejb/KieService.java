@@ -20,6 +20,7 @@ package org.kie.services.remote.ejb;
 import java.util.List;
 
 import javax.ejb.Local;
+import javax.ejb.Remote;
 import javax.ejb.Lock;
 import javax.ejb.LockType;
 import javax.ejb.Singleton;
@@ -30,11 +31,13 @@ import javax.inject.Inject;
 
 import org.kie.remote.services.rest.graph.jaxb.ActiveNodeInfo;
 import org.kie.services.remote.IGPEKieService;
+import org.kie.services.remote.IGPERemoteKieService;
 
 /*
  * EJB Facade that introduces transaction boundaries and remoting interface for KieService functionality
  */
 
+@Remote(IGPERemoteKieService.class)
 @Local(IGPEKieService.class)
 @Singleton(name="kieService")
 @Startup
