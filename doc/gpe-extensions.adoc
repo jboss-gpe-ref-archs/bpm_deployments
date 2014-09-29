@@ -5,6 +5,8 @@
 :osebpms: link:https://github.com/jboss-gpe-ose/openshift-origin-cartridge-bpms-full/blob/master/doc/cart_doc.adoc[OpenShift BPM cartridge]
 :bpmsignalling: link:https://github.com/jboss-gpe-ref-archs/bpm_signalling[BPM Signalling project]
 :bpmmvn: link:https://access.redhat.com/documentation/en-US/Red_Hat_JBoss_BPM_Suite/6.0/html-single/Installation_Guide/index.html#The_JBoss_Integration_Maven_Repository[provided BPM Suite 6 Maven Repositories]
+:mwlaboverviewsetup: link:http://people.redhat.com/jbride/labsCommon/setup.html[Middleware Lab Overview and Set-up]
+
 image::images/rhheader.png[width=900]
 
 :numbered!:
@@ -14,7 +16,9 @@ image::images/rhheader.png[width=900]
 :numbered:
 
 == Overview
-The purpose of this portion of the *bpm_deployments* reference architecture is to demonstrate how to extend the BPM Suite 6 Execution Server to expose one or more functions useful during deployment and/or runtime. 
+The purpose of this portion of the *bpm_deployments* reference architecture is to demonstrate how to extend the BPM Suite 6 Execution Server to expose functions related to creation of process instance state graphs.
+This ability was available in BRMS 5.3.1.
+However, as of BPM Suite 6.0.3, equivalent functionality is not included out-of-the-box.
 
 Currently, the GPE Extensions project provides the following additional functions :
 
@@ -27,30 +31,108 @@ Given a deploymentId, return an array (in JSON format) of ids of BPMN2 processes
 Given a deploymentId and process instance Id, return an XML list of _ActiveNodeInfo_ elements.
 This function is useful for diagraming the current state of process instances. 
 
-
 == Pre-Requisites
+The remainder of this documentation provides instructions for installation, configuration and execution of this reference architecture in Red Hat's Partner Demo System.
+The following is a list of pre-requisites:
 
-. ssh client
-. maven 3.0.5 (or greater) and configured for the {bpmmvn}
-. git client
+. OPENTLC-SSO credentials
++
+`OPENTLC-SSO` user credentials are used to log into the Red Hat Partner Demo System (PDS).
+If you do not currently have an `OPENTLC-SSO` userId, please email: `OPEN-program@redhat.com`.
+
+. Familiarity with Partner Demo System
++
+If you are not already familiar with Red Hat's `Partner Demo System`, please execute what is detailed in the {mwlaboverviewsetup} guide.
+Doing so will ensure that you are proficient with the tooling and workflow needed to complete this reference architecture in an OpenShift Platform as a Service environment.
+
+. Familiarity with {bpmproduct}
 . curl
-. familiarity with {bpmproduct}
-. proficiency with basic *nix command line
-. a BPM Suite 6 run-time environment such as that provided by the {osebpms} or {dockerbpms} projects
 
-== Set-up
+== Provision BPM Suite 6 application
 
-=== local:  Clone this reference architecture
+. Open the `Openshift Explorer` panel of the `JBoss` perspective of JBDS
+. Right-click on the previously created connection to `broker00.ose.opentlc.com`.
++
+Using your `OPENTLC-SSO` credentials, a connection to `broker00.ose.opentlc.com` should already exist after having completed the {mwlaboverviewsetup} guide.
 
-This reference architecture needs to be cloned in your local computer only.
-To do so, execute the following:
+. Select: `New -> Application` .
++
+Since you have already created a domain from the previous introductory lab, the workflow for creation of a new application will be slightly different than what you are used to.
+In particular, the OSE plugin will not prompt you for the creation of a new domain.
 
---------
-git clone https://github.com/jboss-gpe-ref-archs/bpm_deployments.git
---------
+. The following `New or existing OpenShift Application` pop-up should appear:
++
+image::images/new_OSE_app_bpm.png[]
 
-Doing so will create a directory in your local computer called:  *bpm_deployments*.
-For the purposes of this documentation, this directory will be referred to as $REF_ARCH_HOME.
+.. In the `Name` text box, enter: `bpmsapp`
+.. From the `Type` drop-down, select: JBoss BPMS 6.0 (rhgpe-bpms-6.0)
+.. From the `Gear profile` drop-down, select: pds_medium
+. Click `Next`
+. A new dialogue appears entitled `Set up Project for new OpenShift Aplication`.
++
+Check the check box for `Disable automatic maven build when pushing to OpenShift`.
+Afterwards, Click `Next`.
+
+. A new dialogue appears entitled `Import an existing OpenShift application`.
++
+Even though it will not be used, you will be forced to clone the remote git enabled project associated with your new OpenShift application.
+Select a location on your local filesystem where the git enabled project should be cloned to.
++
+image::images/gitclonelocation_bpm.png[]
+
+. Click `Finish`
+. The OSE plugin of JBDS will spin for a couple of minutes as the remote BPM Suite 6 enabled OpenShift application is created.
+. Eventually, the OSE plugin will prompt with a variety of pop-up related details regarding your new application.
++
+Click through all of them except when you come to the dialogue box entitled `Publish bpmsapp?`.
+For this dialogue box, click `No`
++
+image::images/publishbpmslab.png[]
+
+=== BPM Suite 6 App Verification
+
+. Using the `Remote System Explorer` perspective of JBDS, open an SSH terminal and tail the `bpms/standalone/log/server.log` of your remote BPM Suite 6 enabled OSE application
+. Log messages similar to the following should appear:
++
+image::images/newbpmlogfile.png[]
+
+== Configuration and Execution
+
+=== local: Clone this reference architecture
+This reference architecture will be cloned both in your local computer as well as in your remote BPM Suite 6 Openshift environment.
+To clone this reference architecture in your local environment, execute the following:
+
+. Open the `Git` perspective of JBDS.
+. In the `Git Repositories` panel, click the link that allows you to `Clone a Git Repository and add the clone to this view`
+. A pop-up should appear with a name of `Source Git Repository`
+. In the `URI` field, enter the following:
++
+-----
+https://github.com/jboss-gpe-ref-archs/bpm_deployments.git
+-----
+
+. Click `Next`
++
+image::images/clone_repo_to_local.png[]
+
+. Continue to click `Next` through the various screens
++
+On the pop-up screen entitled `Local Destination`, change the default value of the `Directory` field to your preferred location on disk.
+For the purposes of the remainder of these instructions, this directory on your local filesystem will be referred to as:  $REF_ARCH_HOME
+
+. On the last screen of the `Clone Git Repository` pop-up, click `Finish`
++
+Doing so will clone this `bpm_jms_exec_server` project to your local disk
+
+. In JBDS, switch to the `Project Explorer` panel and navigate to:  `File -> Import -> Maven -> Existing Maven Projects`
+. In the `Root Directory` field of the `Maven Projects` pop-up, navigate to the location on disk where the `bpm_jms_exec_server` project was just cloned to.
++
+image::images/import_mvn_project.png[]
+
+. Click `next` through the various pop-up panels and finally `Finish`.
+. Your `Project Explorer` panel should now include the following mavenized projects
++
+image::images/maven_projects.png[]
 
 === local: Build the Reference Architecture
 The $REF_ARCH_HOME/gpe-extensions directory contains sub-modules that extend the BPM Suite 6 Execution Server:

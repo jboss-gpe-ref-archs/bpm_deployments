@@ -1,24 +1,32 @@
 :data-uri:
 :toc2:
-:ref_arch_doc: link:doc/ref_arch.adoc[project documentation]
+:lean-exec-server: link:doc/lean-exec-server.adoc[lean-exec-server]
+:multi-tenant-bpm: link:doc/multi-tenant-bpm.adoc[multi-tenant-bpm]
+:gpe-extensions: link:doc/gpe-extensions.adoc[gpe-extensions]
 
 image::doc/images/rhheader.png[width=900]
 
 :numbered!:
 
-== PURPOSE:
-The purpose of the reference architecture is to do a deep dive into BPM Suite 6 deployment topics of interest. 
-The topics addressed are based on need or partner requests.  The following topics are covered or planned:
-
-* kie-scanner
-* upcoming deployment descriptor (that allows for in-memory kiesession)
-
 == OVERVIEW:
-In BRMS 5.x, processes were stored in packages produced by Guvnor and then downloaded by jbpm console for execution using the  Knowledge Agent. 
+This reference architecture is comprised of several sub-projects related to BPM Suite 6 deployment:
 
-BPM Suite 6, moves away from proprietary packages in favor of, well known and mature, Apache Maven based packaging, known as knowledge archives or kjar. 
-Business assets, such as process definitions, rules, java classes, etc. are now part of a simple jar file built and managed by Maven. 
-A kjar can have defined dependencies on other Maven artifacts including other kjars. 
+. *{gpe-extensions}*
++
+The purpose of this portion of the *bpm_deployments* reference architecture is to demonstrate how to extend the BPM Suite 6 Execution Server to expose functions related to creation of process instance state graphs. 
+This ability was available in BRMS 5.3.1.
+However, as of BPM Suite 6.0.3, equivalent functionality is not included out-of-the-box.
 
-The Maven archive structure opens up new deployment options in BPM Suite 6.  Many of these options are explained in the documentation for this
-reference architecture found in the {ref_arch_doc}.
+. *{multi-tenant-bpm}*
++
+A BPM Suite 6 deployment in a production environment could potentially be multi-tenant.
+In other words, rules and BPMN2 process definitions for multiple client-organizations could potentially be managed by the same BPM Suite 6 server.
+Users from one client-organization should only have visibility to their BPM design-time artifacts.
++
+The purpose of this portion of the *bpm_deployments* reference architecture is to introduce an example of a multi-tenant BPM Suite 6 production environment.
+
+. *{lean-exec-server}*
++
+A BPM Suite 6 deployment suitable for development and testing environments is often different than a deployment suitable for a production environment.
++
+The purpose of this portion of the *bpm_deployments* reference architecture is to introduce the configuration and deployment of a lean BPM Suite 6 Execution Server suitable for a production environment.
