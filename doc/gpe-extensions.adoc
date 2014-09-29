@@ -31,6 +31,13 @@ Given a deploymentId, return an array (in JSON format) of ids of BPMN2 processes
 Given a deploymentId and process instance Id, return an XML list of _ActiveNodeInfo_ elements.
 This function is useful for diagraming the current state of process instances. 
 
+== LEGAL
+
+. This project is copyright of Red Hat, Inc. and distributed with an Apache 2 license
+. This project is maintained by Red Hat's Global Partner Enablement team
+. This project is a community project with no contractual support obligations
+. Please contact Red Hat to discuss support details for Red Hat's BPM Suite 6 product.
+
 == Pre-Requisites
 The remainder of this documentation provides instructions for installation, configuration and execution of this reference architecture in Red Hat's Partner Demo System.
 The following is a list of pre-requisites:
@@ -122,13 +129,10 @@ For the purposes of the remainder of these instructions, this directory on your 
 
 . On the last screen of the `Clone Git Repository` pop-up, click `Finish`
 +
-Doing so will clone this `bpm_jms_exec_server` project to your local disk
+Doing so will clone this `bpm_deployments` project to your local disk
 
 . In JBDS, switch to the `Project Explorer` panel and navigate to:  `File -> Import -> Maven -> Existing Maven Projects`
-. In the `Root Directory` field of the `Maven Projects` pop-up, navigate to the location on disk where the `bpm_jms_exec_server` project was just cloned to.
-+
-image::images/import_mvn_project.png[]
-
+. In the `Root Directory` field of the `Maven Projects` pop-up, navigate to the location on disk where the `bpm_deployments` project was just cloned to.
 . Click `next` through the various pop-up panels and finally `Finish`.
 . Your `Project Explorer` panel should now include the following mavenized projects
 +
@@ -150,31 +154,43 @@ The EJB service is a wrapper around the CDI bean, introduces transaction boundar
 The JAX-RS is a wrapper around the EJB service and exposes GPE Extension functions as RESTful resources.
 
 To build the gpe-extensions project, execute the following:
- 
-. As per the pre-reqs of this reference architecture, ensure that your local maven settings have been configured to use the {bpmmvn}.
-. cd $REF_ARCH_HOME
-. mvn clean install -DskipTests
 
+. In the `Project Explorer` panel of JBDS, right-click on the `parent` project
+. Navigate to: `Run As -> Maven Install`
+. In the `Console` panel, a `BUILD SUCCESS` log message should appear.
++
+image::images/maven_build_success.png[] 
 +
 The end result are the following jar files:
 
 ** $REF_ARCH_HOME/gpe-extensions/gpe-common/target/gpe-common-deployment.jar
 ** $REF_ARCH_HOME/gpe-extensions/gpe-kie-remote/target/gpe-kie-remote.jar
 
-
-=== local:  deploy GPE Extension artifacts
+=== BPM Suite 6:  Deployment
 
 The GPE Extension artifacts that were previously built need to be deployed to the java classpath of BPM Suite 6 .
 Do so as follows using the secure copy utility:
 
------
-scp $REF_ARCH_HOME/gpe-extensions/gpe-common/target/gpe-common-deployment.jar  <ssh.url.to.your.bpm.environment>:~/bpms/standalone/deployments/business-central.war/WEB-INF/lib
-scp $REF_ARCH_HOME/gpe-extensions/gpe-kie-remote/target/gpe-kie-remote.jar  <ssh.url.to.your.bpm.environment>:~/bpms/standalone/deployments/business-central.war/WEB-INF/lib
------ 
+. Repeat these steps for the following artifacts
 
-Afterwards, bounce your BPM Suite 6 java process.
-Once BPM Suite 6 starts back up, check the log file at $JBOSS_HOME/standalone/log/server.log for entries similar to the following:
+* $REF_ARCH_HOME/gpe-extensions/gpe-common/target/gpe-common-deployment.jar
+* $REF_ARCH_HOME/gpe-extensions/gpe-kie-remote/target/gpe-kie-remote.jar
 
+.. In the `Project Explorer` panel of the `JBOSS` perspective of JBDS, right-click on the `domain/target/bpm_rulesMgmt_domain.jar` in `Project Explorer` and select `Copy`.
++
+image::images/copyjar.png[]
+
+.. In the `Remote System Explorer` perspective of JBDS, navigate to `bpmsapp-<your domain>.apps.ose.opentlc.com -> Sftp Files -> My Home -> bpms -> standalone -> deployments -> business-central.war -> WEB-INF -> lib`
+.. Right-click and select `Paste`
++
+image::images/pastedomainjarintobizcentral.png[]
+
+. Once both artifacts have been added to the `WEB-INF/lib` directory of your remote BPM Suite 6 app, re-start the JVM:
+.. Switch back to the `OpenShift Explorer` plugin of JBDS and right-click the `bpmsapp` application
+.. Select `Restart Application`
+. Once BPM Suite 6 starts back up, switch to the `Remote System Explorer` and ssh into your BPM Suite 6 enabled gear.
+. Check the log file at `bpms/standalone/log/server.log` for entries similar to the following:
++
 -----
 INFO  [org.jboss.as.ejb3.deployment.processors.EjbJndiBindingsDeploymentUnitProcessor] (MSC service thread 1-6) JNDI bindings for session bean named kieService in deployment unit deployment "business-central.war" are as follows:
 
@@ -184,9 +200,8 @@ INFO  [org.jboss.as.ejb3.deployment.processors.EjbJndiBindingsDeploymentUnitProc
         java:global/business-central/kieService
         java:app/business-central/kieService
         java:module/kieService
-
 -----
-
++
 This log entry indicates the GPE Extension EJB has been bound to JNDI and all is well.
 We are now ready to test the new functionality.
 
