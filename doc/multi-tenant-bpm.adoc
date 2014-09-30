@@ -1,8 +1,9 @@
 :data-uri:
 :toc2:
 :bpmproduct: link:https://access.redhat.com/site/documentation/en-US/Red_Hat_JBoss_BPM_Suite/[Red Hat's BPM Suite 6 product]
-:dockerbpms: link:https://github.com/jboss-gpe-ose/docker_bpms/blob/master/doc/userguide.adoc[docker_bpms]
 :bpmdownload: link:https://access.redhat.com/jbossnetwork/restricted/listSoftware.html?downloadType=distributions&product=bpm.suite&productChanged=yes[BPM Suite 6 Download site]
+:mwlaboverviewsetup: link:http://people.redhat.com/jbride/labsCommon/setup.html[Middleware Lab Overview and Set-up]
+
 image::images/rhheader.png[width=900]
 
 :numbered!:
@@ -28,14 +29,6 @@ The kie-cli-config utility included in the BPM Suite 6 _Supplementary Tools_ off
 
 This guide also includes instructions to execute a scenario that demonstrates BPM multi-tenancy.
 
-== Pre-Requisites
-
-. maven 3.0.5 (or greater)
-. git client
-. . familiarity with {bpmproduct}
-. proficiency with basic *nix command line
-. a BPM Suite 6 run-time environment such as that provided by the {dockerbpms} project
-. Red Hat Network userId with sufficient entitlements to download the BPM Suite 6 _Supplementary Tools_.
 
 == BPM Multi-Tenancy Best Practices
 === Application defined roles
@@ -86,7 +79,7 @@ What is meant by the _system repository_ is the bare git repository leveraged by
 
 [NOTE]
 *org.uberfire.nio.git.dir* is an optional Java system property used by BPM Suite 6 that defines the path on local disk to all bare BPM repositories.
-In the {dockerbpms} environment, the system property org.uberfire.nio.git.dir is set by default to:  /opt/jboss_bpm_soa/jboss-eap-6.1/bpmsGit/.niogit
+In your remote BPM Suite 6 enabled OpenShift environment, the system property org.uberfire.nio.git.dir is set by default to:  ~/apps-root/data/bpmsGit/.niogit
 
 The *kie-config-cli* tool can be used either in online or offline mode.
 
@@ -100,6 +93,26 @@ To discard local changes on exit, use the discard command.
 . *Offline mode* (a kind of installer style)
 +
 creates and manipulates the system repository directly on the server (there is no discard option).
+
+== Pre-Requisites
+The remainder of this documentation provides instructions for installation, configuration and execution of this reference architecture in Red Hat's Partner Demo System.
+The following is a list of pre-requisites:
+
+. OPENTLC-SSO credentials
++
+`OPENTLC-SSO` user credentials are used to log into the Red Hat Partner Demo System (PDS).
+If you do not currently have an `OPENTLC-SSO` userId, please email: `OPEN-program@redhat.com`.
+
+. Familiarity with Partner Demo System
++
+If you are not already familiar with Red Hat's `Partner Demo System`, please execute what is detailed in the {mwlaboverviewsetup} guide.
+Doing so will ensure that you are proficient with the tooling and workflow needed to complete this reference architecture in an OpenShift Platform as a Service environment.
+
+. Familiarity with {bpmproduct}
+. proficiency with basic *nix command line
+. Red Hat Network userId with sufficient entitlements to download the BPM Suite 6 _Supplementary Tools_.
+
+
 
 == BPM Multi-Tenancy Lab 
 This section of the guide will demonstrate project level multi-tenancy in BPM Suite 6.
@@ -118,76 +131,145 @@ Users associated to a role of *p1users* will only have visibility to design-time
 
 Users associated to a role of *p2users* will only have visibility to design-time artifacts in the *project2* KIE project.
 
+=== Provision BPM Suite 6 application
 
-=== Start BPM Suite 6
-Start your BPM Suite 6.0.2 environment and ensure that the Git server of BPM Console (which by default listens on port 8001) is enabled and accessible.
+. Open the `Openshift Explorer` panel of the `JBoss` perspective of JBDS
+. Right-click on the previously created connection to `broker00.ose.opentlc.com`.
++
+Using your `OPENTLC-SSO` credentials, a connection to `broker00.ose.opentlc.com` should already exist after having completed the {mwlaboverviewsetup} guide.
 
-The Git server of BPM Console in the {dockerbpms} environment is running and exposed.
+. Select: `New -> Application` .
++
+Since you have already created a domain from the previous introductory lab, the workflow for creation of a new application will be slightly different than what you are used to.
+In particular, the OSE plugin will not prompt you for the creation of a new domain.
 
-You'll need the ip address of your docker bpms container.
-To determine the IP address, execute the following in a shell command terminal:
+. The following `New or existing OpenShift Application` pop-up should appear:
++
+image::images/new_OSE_app_bpm.png[]
 
------
-sudo docker inspect --format='{{.NetworkSettings.IPAddress}}' <container.id>
------
+.. In the `Name` text box, enter: `bpmsapp`
+.. From the `Type` drop-down, select: JBoss BPMS 6.0 (rhgpe-bpms-6.0)
+.. From the `Gear profile` drop-down, select: pds_medium
+. Click `Next`
+. A new dialogue appears entitled `Set up Project for new OpenShift Aplication`.
++
+Check the check box for `Disable automatic maven build when pushing to OpenShift`.
+Afterwards, Click `Next`.
 
-[NOTE]
-Substitute the above with the value of your actual docker bpms containerId.
+. A new dialogue appears entitled `Import an existing OpenShift application`.
++
+Even though it will not be used, you will be forced to clone the remote git enabled project associated with your new OpenShift application.
+Select a location on your local filesystem where the git enabled project should be cloned to.
++
+image::images/gitclonelocation_bpm.png[]
 
-=== Create New Users / Roles in BPM ID Mgmt System
-This exercise introduces two new users associated to two new roles.
-In the default _docker bpms_ environment, user credentials are maintained in $JBOSS_HOME/standalone/configuration/application-*.properties .
-Those credentials can be modified via the $JBOSS_HOME/bin/add-user.sh script.
+. Click `Finish`
+. The OSE plugin of JBDS will spin for a couple of minutes as the remote BPM Suite 6 enabled OpenShift application is created.
+. Eventually, the OSE plugin will prompt with a variety of pop-up related details regarding your new application.
++
+Click through all of them except when you come to the dialogue box entitled `Publish bpmsapp?`.
+For this dialogue box, click `No`
++
+image::images/publishbpmslab.png[]
 
-. Create a user with id of *p1user* and role of *p1users*
+=== BPM Suite 6 App Verification
+
+. Using the `Remote System Explorer` perspective of JBDS, open an SSH terminal and tail the `bpms/standalone/log/server.log` of your remote BPM Suite 6 enabled OSE application
+. Log messages similar to the following should appear:
++
+image::images/newbpmlogfile.png[]
+
+=== local: Clone this reference architecture
+This reference architecture will be cloned both in your local computer as well as in your remote BPM Suite 6 Openshift environment.
+To clone this reference architecture in your local environment, execute the following:
+
+. Open the `Git` perspective of JBDS.
+. In the `Git Repositories` panel, click the link that allows you to `Clone a Git Repository and add the clone to this view`
+. A pop-up should appear with a name of `Source Git Repository`
+. In the `URI` field, enter the following:
 +
 -----
-./bin/add-user.sh 
-
-What type of user do you wish to add? 
- a) Management User (mgmt-users.properties) 
- b) Application User (application-users.properties)
-(a): b
-
-Enter the details of the new user to add.
-Realm (ApplicationRealm) : 
-Username : p1user
-Password : 
-Re-enter Password : 
-What roles do you want this user to belong to? (Please enter a comma separated list, or leave blank for none)[  ]: p1users
-About to add user 'p1user' for realm 'ApplicationRealm'
-Is this correct yes/no? yes
-Added user 'p1user' to file '/opt/jboss/eap/jboss-eap-6.1/standalone/configuration/application-users.properties'
-Added user 'p1user' to file '/opt/jboss/eap/jboss-eap-6.1/domain/configuration/application-users.properties'
-Added user 'p1user' with roles p1users to file '/opt/jboss/eap/jboss-eap-6.1/standalone/configuration/application-roles.properties'
-Added user 'p1user' with roles p1users to file '/opt/jboss/eap/jboss-eap-6.1/domain/configuration/application-roles.properties'
-Is this new user going to be used for one AS process to connect to another AS process? 
-e.g. for a slave host controller connecting to the master or for a Remoting connection for server to server EJB calls.
-yes/no? no
+https://github.com/jboss-gpe-ref-archs/bpm_deployments.git
 -----
 
-. Create a second user with id of *p2user* and role of *p2users*
+. Click `Next`
++
+image::images/clone_repo_to_local.png[]
+
+. Continue to click `Next` through the various screens
++
+On the pop-up screen entitled `Local Destination`, change the default value of the `Directory` field to your preferred location on disk.
+For the purposes of the remainder of these instructions, this directory on your local filesystem will be referred to as:  $REF_ARCH_HOME
+
+. On the last screen of the `Clone Git Repository` pop-up, click `Finish`
++
+Doing so will clone this `bpm_deployments` project to your local disk
+
+. In JBDS, switch to the `Project Explorer` panel and navigate to:  `File -> Import -> Maven -> Existing Maven Projects`
+. In the `Root Directory` field of the `Maven Projects` pop-up, navigate to the location on disk where the `bpm_deployments` project was just cloned to.
+. Click `next` through the various pop-up panels and finally `Finish`.
+. Your `Project Explorer` panel should now include the following mavenized projects
++
+image::images/maven_projects.png[]
+
+=== Upload New Users/Roles to BPM Identity Mgmt System
+This exercise introduces two new users associated with two new roles.
+
+In the remote BPM Suite 6 OpenShift application, user credentials are maintained in `~/bpms/standalone/configuration/application-*.properties`.
+This reference architecture includes user and role properties files that will over-ride the default user/role property files in the remote BPM Suite 6 OpenShift application.
+The relevant `multitenant lab` sections of these updated property files are as follows:
+
+. `$REF_ARCH_HOME/multitenant/conf/application-users.properties`
++
+-----
+# Multi-tenant lab:  passwords for p1user and p2user are both:  jb0ssredhat!
+p1user=c44b62ff46d2273a63211e2e51379050
+p2user=6cc4e87b185abf406b7f0e3fdfd2fc0f
+-----
+. `$REF_ARCH_HOME/multitenant/conf/application-roles.properties`
++
+-----
+# multi-tenant lab
+p1user=p1users
+p2user=p2users
+-----
+
+These two files need to be uploaded to BPM Suite 6.
+
+. In the `Project Explorer` panel of JBDS, right-click on both properties files in `$REF_ARCH_HOME/multitenant/conf` and select `copy`
+. Switch to the `Remote System Explorer` perspective and drop both files into the following location of your remote BPM Suite 6 OpenShift app:
+`~/bpms/standalone/configuration`
++
+image::images/dropprops.png[]
 
 === Download and unzip BPM *Supplementary Tools*
-Using your Red Hat Network credentials, navigate your browser to the {bpmdownload}.
-Download the *Supplementary Tools* zip file to your local system.
+The remote BPM Suite 6 OpenShift environment does not include the BPM Supplementary Tools.
+Subsequently, they will need to be uploaded to your remote BPM Suite 6 app and execute from that environment
 
-Once completed, open a shell command terminal and unzip to your preferred location on disk:
+. Using your Red Hat Network credentials, navigate your browser to the {bpmdownload}.
+. Download the *Supplementary Tools* zip file to your local system.
+. Switch to the `Remote System Explorer` perspective of JBDS, use the `Sftp Files` capability to upload the supplementary-tools zip file to the following directory:
+`~/app-root/data`
++
+image::dropsuppzip.png[]
 
+. Remain in the `Remote System Explorer` perspective of JBDS and open an ssh terminal to your remote BPM Suite 6 application.
+. At the shell prompt, execute the following:
++
 -----
-unzip ~/Downloads/jboss-bpms-brms-6.0.2.GA-redhat-5-supplementary-tools.zip  /opt/jboss/
+unzip $OPENSHIFT_DATA_DIR/jboss-bpms-brms-6.0.2.GA-redhat-5-supplementary-tools.zip $OPENSHIFT_DATA_DIR
 -----
-
-In your local system, you should now have the equivalent of the following directory:
-
++
+In your remote BPM environment, you should now have the equivalent of the following directory:
++
 -----
-/opt/jboss/jboss-bpms-brms-6.0.2.GA-redhat-5-supplementary-tools
+$OPENSHIFT_DATA_DIR/jboss-bpms-brms-6.0.2.GA-redhat-5-supplementary-tools
 -----
-
++
 For the remainder of this exercise, the above directory will be referred to as:  *$BPM_TOOLS_DIR*
 
 === Connect *kie-config-cli.sh* to BPM Suite 6 Git Server
-Execute the following in a shell command terminal in your local system:
+Remain in the same shell command terminal of your remote BPM Suite 6 application and execute the following:
 
 -----
 cd $BPM_TOOLS_DIR/kie-config-cli-6.0.3-redhat-4-dist
@@ -209,11 +291,7 @@ jboss
 -----
 
 [NOTE]
-In the above dialogue, you were prompted for the URL to the Git server of your docker bpms container.
-Substitute the ip address used in the example above with the actual ip address of your docker bpms container determined previously.
-The BPM administrator credentials are :  jboss / brms
-
-Congradulations.  Your kie-config-cli tool is now connected in *online mode* to the remote Git Server of your docker bpms container.
+In the above dialogue, you were prompted for the URL to the Git server of your remote bpms container.
 
 === Create an *Organizational Unit and bare git repo*
 In this section of the exercise, an organizational unit and git repository will be created via the kie-config-cli tool.
@@ -297,8 +375,8 @@ By default, the BPM Suite 6 Business Central web archive is locked down as per s
 This default WEB-INF/web.xml config file needs to be modified to allow login authorization of users assigned the *p1users* and *p2users* roles to the BPM Console.
 Do so as follows:
 
-. ssh into your docker bpms environment, and open the following file in a command-line text editor:
-*$JBOSS_HOME/standalone/deployments/business-central.war/WEB-INF/web.xml*
+. ssh into your remote bpms environment, and open the following file in a command-line text editor:
+*bpms/standalone/deployments/business-central.war/WEB-INF/web.xml*
 . In the section related to the *console* security constraints, add both the *p1users* and *p2users* roles
 +
 -----
@@ -358,7 +436,7 @@ In the previous section, configuration changes were made to the business-central
 In this section, the BPM Console will be further modified to associated the *p1users* and *p2users* roles with BPM Console workbench panels typically used by a business analyst.
 Do so as follows:
 
-. ssh into your docker bpms environment, and open the following file in a command-line text editor:
+. ssh into your remote bpms environment, and open the following file in a command-line text editor:
 *$JBOSS_HOME/standalone/deployments/business-central.war/WEB-INF/classes/workbench-policy.properties
 . In the *Granted roles per feature* section, add the *p1users* and *p2users* roles to the list of *roles.wb_for_business_analysts*
 +
