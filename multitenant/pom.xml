@@ -3,14 +3,11 @@
   <modelVersion>4.0.0</modelVersion>
 
   <groupId>com.redhat.gpe.refarch.bpm_deployment</groupId>
-  <artifactId>parent</artifactId>
+  <artifactId>multitenant</artifactId>
   <packaging>pom</packaging>
   <version>1.0</version>
 
   <modules>
-    <module>gpe-extensions</module>
-    <module>multitenant</module>
   </modules>
-
 
 </project>

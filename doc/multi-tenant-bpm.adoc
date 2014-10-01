@@ -236,11 +236,20 @@ p2user=p2users
 
 These two files need to be uploaded to BPM Suite 6.
 
-. In the `Project Explorer` panel of JBDS, right-click on both properties files in `$REF_ARCH_HOME/multitenant/conf` and select `copy`
-. Switch to the `Remote System Explorer` perspective and drop both files into the following location of your remote BPM Suite 6 OpenShift app:
+. In the `Project Explorer` panel of JBDS, select and right-click on both properties files in `multitenant -> conf` and select `copy`
++
+image::images/copypropfiles.png[]
+
+. Switch to the `Remote System Explorer` perspective and paste both files into the following location of your remote BPM Suite 6 OpenShift app:
 `~/bpms/standalone/configuration`
 +
 image::images/dropprops.png[]
++
+Because these two file already exist in your remote OpenShift BPM Suite 6 environment, the following pop-up will appear:
++
+image::images/overridepropfile.png[]
++
+Ensure that the `Overwrite` button is selected and Click `OK`
 
 === Download and unzip BPM *Supplementary Tools*
 The remote BPM Suite 6 OpenShift environment does not include the BPM Supplementary Tools.
@@ -249,15 +258,16 @@ Subsequently, they will need to be uploaded to your remote BPM Suite 6 app and e
 . Using your Red Hat Network credentials, navigate your browser to the {bpmdownload}.
 . Download the *Supplementary Tools* zip file to your local system.
 . Switch to the `Remote System Explorer` perspective of JBDS, use the `Sftp Files` capability to upload the supplementary-tools zip file to the following directory:
-`~/app-root/data`
+`~/app-root/data` (aka: $OPENSHIFT_DATA_DIR).
 +
-image::dropsuppzip.png[]
+image::images/dropsuppzip.png[]
+
 
 . Remain in the `Remote System Explorer` perspective of JBDS and open an ssh terminal to your remote BPM Suite 6 application.
 . At the shell prompt, execute the following:
 +
 -----
-unzip $OPENSHIFT_DATA_DIR/jboss-bpms-brms-6.0.2.GA-redhat-5-supplementary-tools.zip $OPENSHIFT_DATA_DIR
+unzip $OPENSHIFT_DATA_DIR/jboss-bpms-brms-6.0.2.GA-redhat-5-supplementary-tools.zip -d $OPENSHIFT_DATA_DIR
 -----
 +
 In your remote BPM environment, you should now have the equivalent of the following directory:
@@ -265,33 +275,25 @@ In your remote BPM environment, you should now have the equivalent of the follow
 -----
 $OPENSHIFT_DATA_DIR/jboss-bpms-brms-6.0.2.GA-redhat-5-supplementary-tools
 -----
-+
-For the remainder of this exercise, the above directory will be referred to as:  *$BPM_TOOLS_DIR*
 
 === Connect *kie-config-cli.sh* to BPM Suite 6 Git Server
 Remain in the same shell command terminal of your remote BPM Suite 6 application and execute the following:
 
 -----
-cd $BPM_TOOLS_DIR/kie-config-cli-6.0.3-redhat-4-dist
-./kie-config-cli.sh
+cd $OPENSHIFT_DATA_DIR/jboss-bpms-brms-6.0.2.GA-redhat-5-supplementary-tools/kie-config-cli-6.0.3-redhat-4-dist
+./kie-config-cli.sh offline
 -----
 
+A `kie-config-cli` session has been started in offline mode.
 You'll be prompted with a dialogue similar to the following:
 
 -----
 ************* Welcome to Kie config CLI ****************
 
->>Please Specify the location of the remote git system repository [ssh://localhost:8001/system]
-ssh://172.17.0.16:8001/system
->>Please enter username:
-jboss
->>Please enter password:
-
+>>Please specify location of the parent folder of .niogit
+../../bpmsGit
 >>Please enter command (type help to see available commands):
 -----
-
-[NOTE]
-In the above dialogue, you were prompted for the URL to the Git server of your remote bpms container.
 
 === Create an *Organizational Unit and bare git repo*
 In this section of the exercise, an organizational unit and git repository will be created via the kie-config-cli tool.
@@ -464,6 +466,9 @@ Log out of the BPM Console and log back in as the *p2user*.
 Similar to previous, notice that this user only has visibility to the *project2* KIE projoct.
 
 image::images/p2projectexplorer.png[]
+
+*Congradulations!*
+You've successfully configured a design-time multi-tenant BPM Suite 6 environment.
 
 == To-Do
 
