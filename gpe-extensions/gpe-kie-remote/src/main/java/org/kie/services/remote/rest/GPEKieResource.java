@@ -20,10 +20,12 @@ import java.io.IOException;
 import java.io.StringWriter;
 import java.io.Writer;
 import java.util.List;
+import java.util.Map;
 
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.ws.rs.GET;
+import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
@@ -39,6 +41,7 @@ import javax.xml.namespace.QName;
 import javax.xml.transform.Source;
 import javax.xml.transform.stream.StreamSource;
 
+import org.kie.remote.services.rest.ResourceBase;
 import org.kie.remote.services.rest.graph.jaxb.ActiveNodeInfo;
 import org.kie.services.remote.IGPEKieService;
 import org.kie.services.remote.ObjectList;
@@ -49,13 +52,30 @@ import org.slf4j.LoggerFactory;
  */
 @Stateless
 @Path("/GPEKieResource")
-public class GPEKieResource {
+public class GPEKieResource extends ResourceBase {
 
     @EJB(lookup="java:global/business-central/kieService!org.kie.services.remote.IGPEKieService")
     IGPEKieService rProxy;
 
     private Logger log = LoggerFactory.getLogger("GPEKieResource");
     
+    @POST
+    @Path("/{deploymentId: .*}/{processId: .*}/pInstance")
+    public Response startProcessAndReturnInflightVars(@PathParam("deploymentId") final String deploymentId, 
+    		                                          @PathParam("processId") final String processId){
+    	ResponseBuilder builder = null;
+    	try {
+    		Map<String, String[]> requestParams = getRequestParams();
+            String oper = getRelativePath();
+            Map<String, Object> params = extractMapFromParams(requestParams, oper);
+            
+    		Map<String, Object> returnMap = rProxy.startProcessAndReturnInflightVars(deploymentId, processId, params);
+    	} catch(Throwable x) {
+    		x.printStackTrace();
+            builder = Response.status(Status.INTERNAL_SERVER_ERROR);
+    	}
+    	return builder.build();
+    }
     
     /**
      * sample usage :
@@ -82,6 +102,7 @@ public class GPEKieResource {
                 builder = Response.ok(sBuilder.toString());
             }
         } catch(Throwable x){
+        	x.printStackTrace();
             builder = Response.status(Status.INTERNAL_SERVER_ERROR);
         }
         return builder.build();
@@ -100,6 +121,7 @@ public class GPEKieResource {
             List<ActiveNodeInfo> nodeInfoList = rProxy.getActiveNodeInfo(deploymentId, pInstanceId);
             return marshalList(nodeInfoList, "activeNodeInfoList", ActiveNodeInfo.class, ObjectList.class);
         } catch(Throwable x){
+        	x.printStackTrace();
             builder = Response.status(Status.INTERNAL_SERVER_ERROR);
         }
         return builder.build();

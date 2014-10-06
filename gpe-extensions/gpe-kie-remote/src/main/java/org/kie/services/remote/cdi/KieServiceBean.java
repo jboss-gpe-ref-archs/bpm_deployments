@@ -29,8 +29,10 @@ import javax.enterprise.inject.Default;
 import javax.inject.Inject;
 
 import org.drools.core.command.runtime.process.GetProcessIdsCommand;
+import org.drools.core.command.runtime.process.StartProcessCommand;
 import org.jbpm.process.audit.NodeInstanceLog;
 import org.jbpm.process.audit.ProcessInstanceLog;
+import org.jbpm.workflow.instance.impl.WorkflowProcessInstanceImpl;
 import org.kie.api.KieBase;
 import org.kie.api.command.Command;
 import org.kie.api.definition.process.Node;
@@ -66,6 +68,18 @@ public class KieServiceBean extends ResourceBase implements IGPEKieService {
             sBuilder.append("\n\t");
             sBuilder.append(dId);
         }
+    }
+    
+    public Map<String, Object> startProcessAndReturnInflightVars(String deploymentId, String processId, Map<String, Object> params) {
+
+        WorkflowProcessInstanceImpl pInstance = (WorkflowProcessInstanceImpl)processRequestBean.doKieSessionOperation(
+        		new StartProcessCommand(processId, params), 
+        		deploymentId, 
+        		null);
+        Map<String, Object> returnMap = pInstance.getVariables();
+        returnMap.put(IGPEKieService.PROCESS_INSTANCE_ID, pInstance.getId());
+        returnMap.put(IGPEKieService.PROCESS_INSTANCE_STATE, pInstance.getState());
+        return returnMap;
     }
     
     public List<String> listProcesses(String deploymentId){

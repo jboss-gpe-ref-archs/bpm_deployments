@@ -8,6 +8,7 @@
   <version>1.0</version>
 
   <modules>
+    <module>domain</module>
     <module>gpe-common</module>
     <module>gpe-kie-remote</module>
   </modules>

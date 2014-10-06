@@ -17,12 +17,16 @@
 package org.kie.services.remote;
 
 import java.util.List;
+import java.util.Map;
 
 import org.kie.remote.services.rest.graph.jaxb.ActiveNodeInfo;
 
 
 public interface IGPEKieService {
     
-    public List<ActiveNodeInfo> getActiveNodeInfo(String deploymentId, String instanceId);
+    String PROCESS_INSTANCE_ID = "pInstanceId";
+	String PROCESS_INSTANCE_STATE = "pInstanceState";
+	public Map<String, Object> startProcessAndReturnInflightVars(String deploymentId, String processId, Map<String, Object> params);
+	public List<ActiveNodeInfo> getActiveNodeInfo(String deploymentId, String instanceId);
     public List<String> listProcesses(String deploymentId);
 }

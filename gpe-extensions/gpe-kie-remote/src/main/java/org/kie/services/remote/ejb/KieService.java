@@ -18,6 +18,7 @@
 package org.kie.services.remote.ejb;
 
 import java.util.List;
+import java.util.Map;
 
 import javax.ejb.Local;
 import javax.ejb.Remote;
@@ -47,11 +48,14 @@ public class KieService implements IGPEKieService {
     
     @Inject
     private IGPEKieService kieBean;
+    
+    public Map<String, Object> startProcessAndReturnInflightVars(String deploymentId, String processId, Map<String, Object> params) {
+    	return kieBean.startProcessAndReturnInflightVars(deploymentId, processId, params);
+    }
 
     public List<String> listProcesses(String deploymentId) {
         return kieBean.listProcesses(deploymentId);
     }
-    
     
     /*
     Caused by: java.lang.IllegalStateException: This persistence strategy only deals with UserTransaction instances!
@@ -65,4 +69,5 @@ public class KieService implements IGPEKieService {
     public List<ActiveNodeInfo> getActiveNodeInfo(String deploymentId, String instanceId) {
         return kieBean.getActiveNodeInfo(deploymentId, instanceId);
     }
+
 }
