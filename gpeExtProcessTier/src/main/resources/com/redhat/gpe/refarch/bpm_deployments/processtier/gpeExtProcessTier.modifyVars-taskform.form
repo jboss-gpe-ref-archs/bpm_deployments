@@ -1,0 +1,30 @@
+
+<form id="1865568979">
+<property name="subject" value=""/>
+<property name="name" value="gpeExtProcessTier.modifyVars-taskform.form"/>
+<property name="displayMode" value="default"/>
+<property name="status" value="0"/>
+<field position="0" name="driver_driverId" type="InputTextPrimitiveInteger" id="2005672191">
+<property name="fieldRequired" value="false"/>
+<property name="label" value="quot;enquot;,quot;driverId (driver)quot;"/>
+<property name="inputBinding" value=""/>
+<property name="outputBinding" value="driver/driverId"/>
+<property name="fieldClass" value="int"/>
+</field>
+<field position="1" name="driver_driverName" type="InputText" id="1126806129">
+<property name="fieldRequired" value="false"/>
+<property name="label" value="quot;enquot;,quot;driverName (driver)quot;"/>
+<property name="inputBinding" value=""/>
+<property name="outputBinding" value="driver/driverName"/>
+<property name="fieldClass" value="java.lang.String"/>
+</field>
+<field position="2" name="policyName" type="InputText" id="125714261">
+<property name="fieldRequired" value="false"/>
+<property name="label" value="quot;enquot;,quot;policyName (policyName)quot;"/>
+<property name="inputBinding" value=""/>
+<property name="outputBinding" value="policyName"/>
+<property name="fieldClass" value="java.lang.String"/>
+</field>
+<dataHolder inputId="" name="#0000A0" type="className" outId="driver" value="com.redhat.gpe.refarch.bpm_deployment.domain.Driver" id="driver"/>
+<dataHolder inputId="" name="#FF54A7" type="basicType" outId="policyName" value="java.lang.String" id="policyName"/>
+</form>
