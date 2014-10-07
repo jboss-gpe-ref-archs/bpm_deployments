@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<bpmn2:definitions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://www.omg.org/bpmn20" xmlns:bpmn2="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:bpsim="http://www.bpsim.org/schemas/1.0" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:drools="http://www.jboss.org/drools" id="_VQduUE4uEeSphv3o4iDFRw" xsi:schemaLocation="http://www.omg.org/spec/BPMN/20100524/MODEL BPMN20.xsd http://www.jboss.org/drools drools.xsd http://www.bpsim.org/schemas/1.0 bpsim.xsd" expressionLanguage="http://www.mvel.org/2.0" targetNamespace="http://www.omg.org/bpmn20" typeLanguage="http://www.java.com/javaTypes">
+<bpmn2:definitions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://www.omg.org/bpmn20" xmlns:bpmn2="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:bpsim="http://www.bpsim.org/schemas/1.0" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:drools="http://www.jboss.org/drools" id="_Z91cYE4uEeSphv3o4iDFRw" xsi:schemaLocation="http://www.omg.org/spec/BPMN/20100524/MODEL BPMN20.xsd http://www.jboss.org/drools drools.xsd http://www.bpsim.org/schemas/1.0 bpsim.xsd" expressionLanguage="http://www.mvel.org/2.0" targetNamespace="http://www.omg.org/bpmn20" typeLanguage="http://www.java.com/javaTypes">
   <bpmn2:itemDefinition id="_driverItem" structureRef="com.redhat.gpe.refarch.bpm_deployment.domain.Driver"/>
   <bpmn2:itemDefinition id="_policyNameItem" structureRef="String"/>
   <bpmn2:process id="gpeExtProcessTier.modifyVars" drools:packageName="org.jbpm" drools:version="1.0" name="modifyVars" isExecutable="true">
@@ -18,7 +18,7 @@
       <bpmn2:incoming>_D2153212-DFEE-441F-8A3A-750A45ED23A7</bpmn2:incoming>
       <bpmn2:outgoing>_0AD232C6-42C8-4BD3-8EFE-8395F4593769</bpmn2:outgoing>
       <bpmn2:script><![CDATA[System.out.println("modifyVars ...");
-driver.setDriverId(12345");
+driver.setDriverId(12345);
 driver.setDriverName("azra");
                    
 policyName = "Azra's Policy";]]></bpmn2:script>
@@ -26,40 +26,40 @@ policyName = "Azra's Policy";]]></bpmn2:script>
     <bpmn2:sequenceFlow id="_D2153212-DFEE-441F-8A3A-750A45ED23A7" drools:bgcolor="#000000" drools:selectable="true" sourceRef="processStartEvent" targetRef="_4EAD578A-0EEA-43E5-89E1-318BE5B1C02E"/>
     <bpmn2:sequenceFlow id="_0AD232C6-42C8-4BD3-8EFE-8395F4593769" drools:bgcolor="#000000" drools:selectable="true" sourceRef="_4EAD578A-0EEA-43E5-89E1-318BE5B1C02E" targetRef="_3098C449-A93F-4DE4-9BF2-E0BFACBE17F4"/>
   </bpmn2:process>
-  <bpmndi:BPMNDiagram id="_VQduUU4uEeSphv3o4iDFRw">
-    <bpmndi:BPMNPlane id="_VQduUk4uEeSphv3o4iDFRw" bpmnElement="gpeExtProcessTier.modifyVars">
-      <bpmndi:BPMNShape id="_VQduU04uEeSphv3o4iDFRw" bpmnElement="processStartEvent">
+  <bpmndi:BPMNDiagram id="_Z91cYU4uEeSphv3o4iDFRw">
+    <bpmndi:BPMNPlane id="_Z91cYk4uEeSphv3o4iDFRw" bpmnElement="gpeExtProcessTier.modifyVars">
+      <bpmndi:BPMNShape id="_Z91cY04uEeSphv3o4iDFRw" bpmnElement="processStartEvent">
         <dc:Bounds height="30.0" width="30.0" x="120.0" y="165.0"/>
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="_VQduVE4uEeSphv3o4iDFRw" bpmnElement="_3098C449-A93F-4DE4-9BF2-E0BFACBE17F4">
+      <bpmndi:BPMNShape id="_Z91cZE4uEeSphv3o4iDFRw" bpmnElement="_3098C449-A93F-4DE4-9BF2-E0BFACBE17F4">
         <dc:Bounds height="28.0" width="28.0" x="345.0" y="166.0"/>
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="_VQduVU4uEeSphv3o4iDFRw" bpmnElement="_4EAD578A-0EEA-43E5-89E1-318BE5B1C02E">
+      <bpmndi:BPMNShape id="_Z91cZU4uEeSphv3o4iDFRw" bpmnElement="_4EAD578A-0EEA-43E5-89E1-318BE5B1C02E">
         <dc:Bounds height="80.0" width="100.0" x="195.0" y="140.0"/>
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNEdge id="_VQduVk4uEeSphv3o4iDFRw" bpmnElement="_D2153212-DFEE-441F-8A3A-750A45ED23A7">
+      <bpmndi:BPMNEdge id="_Z91cZk4uEeSphv3o4iDFRw" bpmnElement="_D2153212-DFEE-441F-8A3A-750A45ED23A7">
         <di:waypoint xsi:type="dc:Point" x="135.0" y="180.0"/>
         <di:waypoint xsi:type="dc:Point" x="245.0" y="180.0"/>
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="_VQduV04uEeSphv3o4iDFRw" bpmnElement="_0AD232C6-42C8-4BD3-8EFE-8395F4593769">
+      <bpmndi:BPMNEdge id="_Z91cZ04uEeSphv3o4iDFRw" bpmnElement="_0AD232C6-42C8-4BD3-8EFE-8395F4593769">
         <di:waypoint xsi:type="dc:Point" x="245.0" y="180.0"/>
         <di:waypoint xsi:type="dc:Point" x="359.0" y="180.0"/>
       </bpmndi:BPMNEdge>
     </bpmndi:BPMNPlane>
   </bpmndi:BPMNDiagram>
-  <bpmn2:relationship id="_VQduWE4uEeSphv3o4iDFRw" type="BPSimData">
+  <bpmn2:relationship id="_Z91caE4uEeSphv3o4iDFRw" type="BPSimData">
     <bpmn2:extensionElements>
       <bpsim:BPSimData>
         <bpsim:Scenario xsi:type="bpsim:Scenario" id="default" name="Simulationscenario">
           <bpsim:ScenarioParameters xsi:type="bpsim:ScenarioParameters" baseTimeUnit="min"/>
-          <bpsim:ElementParameters xsi:type="bpsim:ElementParameters" elementRef="_0AD232C6-42C8-4BD3-8EFE-8395F4593769" id="_VQduWU4uEeSphv3o4iDFRw">
+          <bpsim:ElementParameters xsi:type="bpsim:ElementParameters" elementRef="_0AD232C6-42C8-4BD3-8EFE-8395F4593769" id="_Z91caU4uEeSphv3o4iDFRw">
             <bpsim:ControlParameters xsi:type="bpsim:ControlParameters">
               <bpsim:Probability xsi:type="bpsim:Parameter">
                 <bpsim:FloatingParameter value="100.0"/>
               </bpsim:Probability>
             </bpsim:ControlParameters>
           </bpsim:ElementParameters>
-          <bpsim:ElementParameters xsi:type="bpsim:ElementParameters" elementRef="_4EAD578A-0EEA-43E5-89E1-318BE5B1C02E" id="_VQduWk4uEeSphv3o4iDFRw">
+          <bpsim:ElementParameters xsi:type="bpsim:ElementParameters" elementRef="_4EAD578A-0EEA-43E5-89E1-318BE5B1C02E" id="_Z91cak4uEeSphv3o4iDFRw">
             <bpsim:TimeParameters xsi:type="bpsim:TimeParameters">
               <bpsim:ProcessingTime xsi:type="bpsim:Parameter">
                 <bpsim:UniformDistribution max="10.0" min="5.0"/>
@@ -71,7 +71,7 @@ policyName = "Azra's Policy";]]></bpmn2:script>
               </bpsim:UnitCost>
             </bpsim:CostParameters>
           </bpsim:ElementParameters>
-          <bpsim:ElementParameters xsi:type="bpsim:ElementParameters" elementRef="processStartEvent" id="_VQduW04uEeSphv3o4iDFRw">
+          <bpsim:ElementParameters xsi:type="bpsim:ElementParameters" elementRef="processStartEvent" id="_Z91ca04uEeSphv3o4iDFRw">
             <bpsim:TimeParameters xsi:type="bpsim:TimeParameters">
               <bpsim:ProcessingTime xsi:type="bpsim:Parameter">
                 <bpsim:UniformDistribution max="10.0" min="5.0"/>
@@ -83,14 +83,14 @@ policyName = "Azra's Policy";]]></bpmn2:script>
               </bpsim:Probability>
             </bpsim:ControlParameters>
           </bpsim:ElementParameters>
-          <bpsim:ElementParameters xsi:type="bpsim:ElementParameters" elementRef="_D2153212-DFEE-441F-8A3A-750A45ED23A7" id="_VQduXE4uEeSphv3o4iDFRw">
+          <bpsim:ElementParameters xsi:type="bpsim:ElementParameters" elementRef="_D2153212-DFEE-441F-8A3A-750A45ED23A7" id="_Z91cbE4uEeSphv3o4iDFRw">
             <bpsim:ControlParameters xsi:type="bpsim:ControlParameters">
               <bpsim:Probability xsi:type="bpsim:Parameter">
                 <bpsim:FloatingParameter value="100.0"/>
               </bpsim:Probability>
             </bpsim:ControlParameters>
           </bpsim:ElementParameters>
-          <bpsim:ElementParameters xsi:type="bpsim:ElementParameters" elementRef="_3098C449-A93F-4DE4-9BF2-E0BFACBE17F4" id="_VQduXU4uEeSphv3o4iDFRw">
+          <bpsim:ElementParameters xsi:type="bpsim:ElementParameters" elementRef="_3098C449-A93F-4DE4-9BF2-E0BFACBE17F4" id="_Z91cbU4uEeSphv3o4iDFRw">
             <bpsim:TimeParameters xsi:type="bpsim:TimeParameters">
               <bpsim:ProcessingTime xsi:type="bpsim:Parameter">
                 <bpsim:UniformDistribution max="10.0" min="5.0"/>
@@ -100,7 +100,7 @@ policyName = "Azra's Policy";]]></bpmn2:script>
         </bpsim:Scenario>
       </bpsim:BPSimData>
     </bpmn2:extensionElements>
-    <bpmn2:source>_VQduUE4uEeSphv3o4iDFRw</bpmn2:source>
-    <bpmn2:target>_VQduUE4uEeSphv3o4iDFRw</bpmn2:target>
+    <bpmn2:source>_Z91cYE4uEeSphv3o4iDFRw</bpmn2:source>
+    <bpmn2:target>_Z91cYE4uEeSphv3o4iDFRw</bpmn2:target>
   </bpmn2:relationship>
 </bpmn2:definitions>
