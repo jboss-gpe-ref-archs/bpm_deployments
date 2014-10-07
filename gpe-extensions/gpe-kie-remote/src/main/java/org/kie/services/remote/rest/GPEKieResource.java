@@ -65,15 +65,23 @@ public class GPEKieResource extends ResourceBase {
     		                                          @PathParam("processId") final String processId){
     	ResponseBuilder builder = null;
     	try {
-    		Map<String, String[]> requestParams = getRequestParams();
+    		/*Map<String, String[]> requestParams = getRequestParams();
             String oper = getRelativePath();
             Map<String, Object> params = extractMapFromParams(requestParams, oper);
             
-    		Map<String, Object> returnMap = rProxy.startProcessAndReturnInflightVars(deploymentId, processId, params);
+    		Map<String, Object> returnMap = rProxy.startProcessAndReturnInflightVars(deploymentId, processId, params);*/
     	} catch(Throwable x) {
     		x.printStackTrace();
             builder = Response.status(Status.INTERNAL_SERVER_ERROR);
     	}
+    	return builder.build();
+    }
+    
+    @POST
+    @Path("/test/")
+    public Response test(){
+    	rProxy.test();
+    	ResponseBuilder builder = Response.status(Status.OK);
     	return builder.build();
     }
     

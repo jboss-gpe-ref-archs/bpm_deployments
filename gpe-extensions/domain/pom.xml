@@ -3,12 +3,12 @@
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
   <modelVersion>4.0.0</modelVersion>
   <groupId>com.redhat.gpe.refarch.bpm_deployment</groupId>
-  <artifactId>domain</artifactId>
+  <artifactId>gpeExtDomain</artifactId>
   <version>1.0</version>
 
   <!-- use jandex to explicitly index annotations in domain model jar deployed as static module -->
   <build>
-    <finalName>bpm_deployments_domain</finalName>                   
+    <finalName>gpeExtDomain</finalName>                   
     <plugins>
       <plugin>
         <groupId>org.jboss.jandex</groupId>

@@ -16,6 +16,7 @@
 
 package org.kie.services.remote.cdi;
 
+import java.security.Policy;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -47,6 +48,9 @@ import org.kie.remote.services.rest.graph.jaxb.DiagramNodeInfo;
 import org.kie.services.remote.IGPEKieService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.google.common.collect.Multiset.Entry;
+import com.redhat.gpe.refarch.bpm_deployment.domain.Driver;
 
 @ApplicationScoped
 @Alternative
@@ -80,6 +84,19 @@ public class KieServiceBean extends ResourceBase implements IGPEKieService {
         returnMap.put(IGPEKieService.PROCESS_INSTANCE_ID, pInstance.getId());
         returnMap.put(IGPEKieService.PROCESS_INSTANCE_STATE, pInstance.getState());
         return returnMap;
+    }
+    
+    public void test() {
+    	Driver dObj = new Driver(123, "alex");
+    	Map<String, Object> params = new HashMap<String, Object>();
+    	params.put("driver", dObj);
+    	params.put("policyName", "alexPolicy");
+    	Map<String, Object> rParams = this.startProcessAndReturnInflightVars(deploymentId, processId, params);
+    	
+    	for(Map.Entry<String, Object> param : rParams.entrySet()){
+    		System.out.println("param = "+param.getKey()+ " "+ param.getValue());
+    	}
+    	
     }
     
     public List<String> listProcesses(String deploymentId){

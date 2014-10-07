@@ -29,4 +29,5 @@ public interface IGPEKieService {
 	public Map<String, Object> startProcessAndReturnInflightVars(String deploymentId, String processId, Map<String, Object> params);
 	public List<ActiveNodeInfo> getActiveNodeInfo(String deploymentId, String instanceId);
     public List<String> listProcesses(String deploymentId);
+	public void test();
 }
