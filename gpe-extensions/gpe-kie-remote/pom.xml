@@ -3,69 +3,42 @@ xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 
   <modelVersion>4.0.0</modelVersion>
-  <parent>
-    <groupId>org.jboss.ip.component.management</groupId>
-    <artifactId>ip-parent</artifactId>
-    <version>1.1-redhat-5</version>
-  </parent>
   <groupId>com.redhat.gpe.refarch.bpm_deployment</groupId>
   <artifactId>gpe-kie-remote</artifactId>
   <version>1.0</version>
   <packaging>jar</packaging>
 
   <properties>
-    <bpm.version>6.0.3-redhat-4</bpm.version>
+    <bpm.version>6.1.0.Beta2</bpm.version>
   </properties>
 
   <build>
     <finalName>gpe-kie-remote</finalName>
   </build>
 
-  <dependencyManagement>
-    <dependencies>
-      <dependency>
-        <groupId>org.jboss.ip.component.management</groupId>
-        <artifactId>ip-dependency-management-all</artifactId>
-        <version>1.2-redhat-13</version>
-        <type>pom</type>
-        <scope>import</scope>
-      </dependency>
-      <dependency>
-        <groupId>org.jboss.component.management</groupId>
-        <artifactId>jboss-dependency-management-all</artifactId>
-        <version>6.1.1.Final-redhat-61</version>
-        <type>pom</type>
-        <scope>import</scope>
-      </dependency>
-    </dependencies>
-  </dependencyManagement>
   <dependencies>
 
     <dependency>
       <groupId>org.jboss.spec.javax.ejb</groupId>
       <artifactId>jboss-ejb-api_3.1_spec</artifactId>
+      <version>1.0.2.Final</version>
     </dependency>
     <dependency>
       <groupId>javax.inject</groupId>
       <artifactId>javax.inject</artifactId>
+      <version>1</version>
     </dependency>
     <dependency>
       <groupId>javax.enterprise</groupId>
       <artifactId>cdi-api</artifactId>
-    </dependency>
-
-    <dependency>
-      <groupId>org.kie</groupId>
-      <artifactId>kie-api</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.kie</groupId>
-      <artifactId>kie-internal</artifactId>
+      <version>1.1</version>
     </dependency>
     <dependency>
       <groupId>org.slf4j</groupId>
       <artifactId>slf4j-simple</artifactId>
+      <version>1.7.1</version>
     </dependency>
+
     <dependency>
       <groupId>org.kie.remote</groupId>
       <artifactId>kie-services-remote</artifactId>
@@ -73,15 +46,32 @@ xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xs
     </dependency>
     <dependency>
       <groupId>org.kie</groupId>
+      <artifactId>kie-api</artifactId>
+      <version>${bpm.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.kie</groupId>
+      <artifactId>kie-internal</artifactId>
+      <version>${bpm.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.kie</groupId>
       <artifactId>kie-ci</artifactId>
+      <version>${bpm.version}</version>
     </dependency>
     <dependency>
       <groupId>org.jbpm</groupId>
       <artifactId>jbpm-bpmn2</artifactId>
+      <version>${bpm.version}</version>
     </dependency>
     <dependency>
       <groupId>com.redhat.gpe.refarch.bpm_deployment</groupId>
       <artifactId>gpe-common</artifactId>
+      <version>1.0</version>
+    </dependency>
+    <dependency>
+      <groupId>com.redhat.gpe.refarch.bpm_deployment</groupId>
+      <artifactId>gpeExtDomain</artifactId>
       <version>1.0</version>
     </dependency>
   </dependencies>

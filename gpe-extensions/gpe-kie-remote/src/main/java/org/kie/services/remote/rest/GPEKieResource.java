@@ -41,8 +41,8 @@ import javax.xml.namespace.QName;
 import javax.xml.transform.Source;
 import javax.xml.transform.stream.StreamSource;
 
-import org.kie.remote.services.rest.ResourceBase;
-import org.kie.remote.services.rest.graph.jaxb.ActiveNodeInfo;
+import org.kie.services.remote.rest.ResourceBase;
+import org.kie.services.remote.rest.graph.jaxb.ActiveNodeInfo;
 import org.kie.services.remote.IGPEKieService;
 import org.kie.services.remote.ObjectList;
 import org.slf4j.Logger;

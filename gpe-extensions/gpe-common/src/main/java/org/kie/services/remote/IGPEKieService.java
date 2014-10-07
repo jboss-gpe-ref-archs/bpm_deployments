@@ -19,7 +19,7 @@ package org.kie.services.remote;
 import java.util.List;
 import java.util.Map;
 
-import org.kie.remote.services.rest.graph.jaxb.ActiveNodeInfo;
+import org.kie.services.remote.rest.graph.jaxb.ActiveNodeInfo;
 
 
 public interface IGPEKieService {

@@ -28,11 +28,15 @@ import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.inject.Alternative;
 import javax.enterprise.inject.Default;
 import javax.inject.Inject;
+import javax.persistence.EntityManagerFactory;
+import javax.persistence.PersistenceUnit;
 
 import org.drools.core.command.runtime.process.GetProcessIdsCommand;
 import org.drools.core.command.runtime.process.StartProcessCommand;
+import org.jbpm.process.audit.JPAAuditLogService;
 import org.jbpm.process.audit.NodeInstanceLog;
 import org.jbpm.process.audit.ProcessInstanceLog;
+import org.jbpm.process.audit.AuditLogService;
 import org.jbpm.workflow.instance.impl.WorkflowProcessInstanceImpl;
 import org.kie.api.KieBase;
 import org.kie.api.command.Command;
@@ -40,11 +44,12 @@ import org.kie.api.definition.process.Node;
 import org.kie.api.definition.process.NodeContainer;
 import org.kie.api.definition.process.WorkflowProcess;
 import org.kie.api.runtime.manager.RuntimeEngine;
-import org.kie.remote.services.cdi.DeploymentInfoBean;
-import org.kie.remote.services.rest.ResourceBase;
-import org.kie.remote.services.rest.graph.jaxb.ActiveNodeInfo;
-import org.kie.remote.services.rest.graph.jaxb.DiagramInfo;
-import org.kie.remote.services.rest.graph.jaxb.DiagramNodeInfo;
+import org.kie.services.remote.cdi.DeploymentInfoBean;
+import org.kie.services.remote.rest.ResourceBase;
+import org.kie.services.remote.rest.graph.jaxb.ActiveNodeInfo;
+import org.kie.services.remote.rest.graph.jaxb.DiagramInfo;
+import org.kie.services.remote.rest.graph.jaxb.DiagramNodeInfo;
+import org.kie.services.remote.cdi.ProcessRequestBean;
 import org.kie.services.remote.IGPEKieService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -59,9 +64,16 @@ public class KieServiceBean extends ResourceBase implements IGPEKieService {
     
     private static final Logger logger = LoggerFactory.getLogger(KieServiceBean.class);
     private static Logger log = LoggerFactory.getLogger("KieServiceBean");
+    
+    @PersistenceUnit
+    private EntityManagerFactory emf;
 
     @Inject
     private DeploymentInfoBean dInfoBean;
+
+    /* KIE information and processing */
+    @Inject
+    private ProcessRequestBean processRequestBean;
     
     @PostConstruct
     public void start() {
@@ -79,8 +91,15 @@ public class KieServiceBean extends ResourceBase implements IGPEKieService {
         WorkflowProcessInstanceImpl pInstance = (WorkflowProcessInstanceImpl)processRequestBean.doKieSessionOperation(
         		new StartProcessCommand(processId, params), 
         		deploymentId, 
-        		null);
-        Map<String, Object> returnMap = pInstance.getVariables();
+        		null,
+        		"Unable to start process with process definition id "+processId);
+        Map<String, Object> variables = pInstance.getVariables();
+
+        // need to create new Map because the map from WorkflowProcessInstanceImple is immutable
+        Map<String, Object> returnMap = new HashMap<String, Object>();
+        for (String key : variables.keySet()) {
+            returnMap.put(key, variables.get(key));
+        }
         returnMap.put(IGPEKieService.PROCESS_INSTANCE_ID, pInstance.getId());
         returnMap.put(IGPEKieService.PROCESS_INSTANCE_STATE, pInstance.getState());
         return returnMap;
@@ -91,7 +110,7 @@ public class KieServiceBean extends ResourceBase implements IGPEKieService {
     	Map<String, Object> params = new HashMap<String, Object>();
     	params.put("driver", dObj);
     	params.put("policyName", "alexPolicy");
-    	Map<String, Object> rParams = this.startProcessAndReturnInflightVars(deploymentId, processId, params);
+    	Map<String, Object> rParams = this.startProcessAndReturnInflightVars("com.redhat.gpe.refarch.bpm_deployments:gpeExtProcessTier:1.0", "gpeExtProcessTier.modifyVars", params);
     	
     	for(Map.Entry<String, Object> param : rParams.entrySet()){
     		System.out.println("param = "+param.getKey()+ " "+ param.getValue());
@@ -101,18 +120,24 @@ public class KieServiceBean extends ResourceBase implements IGPEKieService {
     
     public List<String> listProcesses(String deploymentId){
         Command<?> cmd = new GetProcessIdsCommand();
-        List<String> pList = (List<String>) processRequestBean.doKieSessionOperation(cmd, deploymentId, null);
+        List<String> pList = (List<String>) processRequestBean.doKieSessionOperation(
+        		cmd, 
+        		deploymentId, 
+        		null,
+        		"Unable to list processes for deploymentId = "+deploymentId
+        		);
         return pList;
     }
     
     
     public List<ActiveNodeInfo> getActiveNodeInfo(String deploymentId, String instanceId) {
-        ProcessInstanceLog processInstance = processRequestBean.getAuditLogService().findProcessInstance(new Long(instanceId));
+    	AuditLogService auditLogService = new JPAAuditLogService(emf);
+        ProcessInstanceLog processInstance = auditLogService.findProcessInstance(new Long(instanceId));
         if (processInstance == null) {
             throw new IllegalArgumentException("Could not find process instance " + instanceId);
         }
         Map<String, NodeInstanceLog> nodeInstances = new HashMap<String, NodeInstanceLog>();
-        for (NodeInstanceLog nodeInstance: processRequestBean.getAuditLogService().findNodeInstances(new Long(instanceId))) {
+        for (NodeInstanceLog nodeInstance: auditLogService.findNodeInstances(new Long(instanceId))) {
         if (nodeInstance.getType() == NodeInstanceLog.TYPE_ENTER) {
             nodeInstances.put(nodeInstance.getNodeInstanceId(), nodeInstance);
             } else {
