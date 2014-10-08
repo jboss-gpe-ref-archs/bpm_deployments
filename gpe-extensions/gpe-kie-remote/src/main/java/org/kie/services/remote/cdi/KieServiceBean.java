@@ -54,9 +54,6 @@ import org.kie.services.remote.IGPEKieService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.common.collect.Multiset.Entry;
-import com.redhat.gpe.refarch.bpm_deployment.domain.Driver;
-
 @ApplicationScoped
 @Alternative
 @Default
@@ -98,24 +95,11 @@ public class KieServiceBean extends ResourceBase implements IGPEKieService {
         // need to create new Map because the map from WorkflowProcessInstanceImple is immutable
         Map<String, Object> returnMap = new HashMap<String, Object>();
         for (String key : variables.keySet()) {
+        	logger.info("key = "+key+" : value = "+variables.get(key));
             returnMap.put(key, variables.get(key));
         }
-        returnMap.put(IGPEKieService.PROCESS_INSTANCE_ID, pInstance.getId());
-        returnMap.put(IGPEKieService.PROCESS_INSTANCE_STATE, pInstance.getState());
+        returnMap.put(IGPEKieService.PROCESS_INSTANCE, pInstance);
         return returnMap;
-    }
-    
-    public void test() {
-    	Driver dObj = new Driver(123, "alex");
-    	Map<String, Object> params = new HashMap<String, Object>();
-    	params.put("driver", dObj);
-    	params.put("policyName", "alexPolicy");
-    	Map<String, Object> rParams = this.startProcessAndReturnInflightVars("com.redhat.gpe.refarch.bpm_deployments:gpeExtProcessTier:1.0", "gpeExtProcessTier.modifyVars", params);
-    	
-    	for(Map.Entry<String, Object> param : rParams.entrySet()){
-    		System.out.println("param = "+param.getKey()+ " "+ param.getValue());
-    	}
-    	
     }
     
     public List<String> listProcesses(String deploymentId){

@@ -70,9 +70,4 @@ public class KieService implements IGPEKieService {
         return kieBean.getActiveNodeInfo(deploymentId, instanceId);
     }
 
-	@Override
-	public void test() {
-		kieBean.test();
-	}
-
 }

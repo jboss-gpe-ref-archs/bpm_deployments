@@ -19,17 +19,23 @@ package org.kie.services.remote.rest;
 import java.io.IOException;
 import java.io.StringWriter;
 import java.io.Writer;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
+import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.core.Context;
+import javax.ws.rs.core.HttpHeaders;
+import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import javax.ws.rs.core.UriInfo;
 import javax.ws.rs.core.Response.ResponseBuilder;
 import javax.ws.rs.core.Response.Status;
 import javax.xml.bind.JAXBContext;
@@ -41,6 +47,8 @@ import javax.xml.namespace.QName;
 import javax.xml.transform.Source;
 import javax.xml.transform.stream.StreamSource;
 
+import org.kie.api.runtime.process.ProcessInstance;
+import org.kie.services.client.serialization.jaxb.impl.process.JaxbProcessInstanceWithVariablesResponse;
 import org.kie.services.remote.rest.ResourceBase;
 import org.kie.services.remote.rest.graph.jaxb.ActiveNodeInfo;
 import org.kie.services.remote.IGPEKieService;
@@ -59,30 +67,42 @@ public class GPEKieResource extends ResourceBase {
 
     private Logger log = LoggerFactory.getLogger("GPEKieResource");
     
-    @POST
-    @Path("/{deploymentId: .*}/{processId: .*}/pInstance")
-    public Response startProcessAndReturnInflightVars(@PathParam("deploymentId") final String deploymentId, 
-    		                                          @PathParam("processId") final String processId){
-    	ResponseBuilder builder = null;
-    	try {
-    		/*Map<String, String[]> requestParams = getRequestParams();
-            String oper = getRelativePath();
-            Map<String, Object> params = extractMapFromParams(requestParams, oper);
-            
-    		Map<String, Object> returnMap = rProxy.startProcessAndReturnInflightVars(deploymentId, processId, params);*/
-    	} catch(Throwable x) {
-    		x.printStackTrace();
-            builder = Response.status(Status.INTERNAL_SERVER_ERROR);
-    	}
-    	return builder.build();
-    }
+    @Context
+    protected HttpHeaders headers;
+
+    @Context
+    protected UriInfo uriInfo;
     
     @POST
-    @Path("/test/")
-    public Response test(){
-    	rProxy.test();
-    	ResponseBuilder builder = Response.status(Status.OK);
-    	return builder.build();
+    @Path("/{deploymentId: .*}/{processId: .*}/pInstance")
+    //@Consumes(MediaType.APPLICATION_XML)
+    @Produces({ "application/xml" })
+    public Response startProcessAndReturnInflightVars(@PathParam("deploymentId") final String deploymentId, 
+                                                      @PathParam("processId") final String processId ) {
+        ResponseBuilder builder = null;
+        try {
+           /* Map<String, List<String>> requestParams = getRequestParams(uriInfo);
+            String oper = getRelativePath(uriInfo);
+            System.out.println("startProcessAndReturnInflightVars() oper = "+oper);
+            Map<String, Object> params = extractMapFromParams(requestParams, oper);*/
+        	Map<String, Object> params = new HashMap<String, Object>();
+            
+            Map<String, Object> returnMap = rProxy.startProcessAndReturnInflightVars(deploymentId, processId, params);
+            ProcessInstance procInst = (ProcessInstance)returnMap.get(IGPEKieService.PROCESS_INSTANCE);
+            Map<String, String> vars = new HashMap<String, String>();
+            for(Map.Entry<String, Object> param : returnMap.entrySet()){
+                System.out.println("param = "+param.getKey()+ " "+ param.getValue().toString());
+                if(!param.getKey().equals(IGPEKieService.PROCESS_INSTANCE)) {
+                    vars.put(param.getKey(), param.getValue().toString());
+                }
+            }
+            JaxbProcessInstanceWithVariablesResponse resp = new JaxbProcessInstanceWithVariablesResponse(procInst, vars, uriInfo.getRequestUri().toString());
+            return createCorrectVariant(resp, headers);
+        } catch(Throwable x) {
+            x.printStackTrace();
+            builder = Response.status(Status.INTERNAL_SERVER_ERROR);
+        }
+        return builder.build();
     }
     
     /**
@@ -110,7 +130,7 @@ public class GPEKieResource extends ResourceBase {
                 builder = Response.ok(sBuilder.toString());
             }
         } catch(Throwable x){
-        	x.printStackTrace();
+            x.printStackTrace();
             builder = Response.status(Status.INTERNAL_SERVER_ERROR);
         }
         return builder.build();
@@ -129,7 +149,7 @@ public class GPEKieResource extends ResourceBase {
             List<ActiveNodeInfo> nodeInfoList = rProxy.getActiveNodeInfo(deploymentId, pInstanceId);
             return marshalList(nodeInfoList, "activeNodeInfoList", ActiveNodeInfo.class, ObjectList.class);
         } catch(Throwable x){
-        	x.printStackTrace();
+            x.printStackTrace();
             builder = Response.status(Status.INTERNAL_SERVER_ERROR);
         }
         return builder.build();
