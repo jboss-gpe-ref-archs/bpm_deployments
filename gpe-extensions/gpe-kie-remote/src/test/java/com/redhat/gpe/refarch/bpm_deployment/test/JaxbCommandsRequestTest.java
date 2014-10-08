@@ -11,8 +11,8 @@ import com.redhat.gpe.refarch.bpm_deployment.domain.Driver;
 
 public class JaxbCommandsRequestTest {
     
-    private static final String processId = "";
-    private static final String deploymentId = "";
+    private static final String processId = "gpeExtProcessTier.modifyVars";
+    private static final String deploymentId = "com.redhat.gpe.refarch.bpm_deployments:gpeExtProcessTier:1.0";
     private static final String DRIVER = "driver";
     private static final String POLICY_NAME = "policyName";
     public static final String EXTRA_JAXB_CLASSES_PROPERTY_NAME = "extraJaxbClasses";

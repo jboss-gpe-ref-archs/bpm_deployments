@@ -1,18 +1,21 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <command-request>
-   <deployment-id />
+   <deployment-id>com.redhat.gpe.refarch.bpm_deployments:gpeExtProcessTier:1.0</deployment-id>
    <ver>1</ver>
-   <start-process processId="">
+   <start-process processId="gpeExtProcessTier.modifyVars">
       <parameter>
          <item key="policyName">
             <value xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="xs:string">Alex policy</value>
          </item>
+
+         <!-- TO-DO:  figure out how to get this to work with REST API .... only seems to work with JMS API
          <item key="driver">
             <value xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="Driver">
                <driverId>98765</driverId>
                <driverName>Alex</driverName>
             </value>
-         </item>
+         </item -->
+
       </parameter>
    </start-process>
 </command-request>

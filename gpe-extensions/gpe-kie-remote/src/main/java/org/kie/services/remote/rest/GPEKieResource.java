@@ -42,12 +42,13 @@ import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBElement;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
-import javax.xml.bind.Unmarshaller;
 import javax.xml.namespace.QName;
-import javax.xml.transform.Source;
-import javax.xml.transform.stream.StreamSource;
 
+import org.drools.core.command.runtime.process.SignalEventCommand;
+import org.drools.core.command.runtime.process.StartProcessCommand;
+import org.kie.api.command.Command;
 import org.kie.api.runtime.process.ProcessInstance;
+import org.kie.services.client.serialization.jaxb.impl.JaxbCommandsRequest;
 import org.kie.services.client.serialization.jaxb.impl.process.JaxbProcessInstanceWithVariablesResponse;
 import org.kie.services.remote.rest.ResourceBase;
 import org.kie.services.remote.rest.graph.jaxb.ActiveNodeInfo;
@@ -75,33 +76,40 @@ public class GPEKieResource extends ResourceBase {
     
     
     /*
-     * curl -v -u jboss:brms -X POST -H "Content-Type:application/xml" -d @gpe-extensions/gpe-kie-remote/src/test/resources/StartProcess.xml http://bpmsapp-jbride.apps.ose.opentlc.com/business-central/rest/GPEKieResource/com.redhat.gpe.refarch.bpm_deployments:gpeExtProcessTier:1.0/gpeExtProcessTier.modifyVars/pInstance
+     * curl -v -u jboss:brms -X POST -H "Content-Type:application/xml" -d @gpe-extensions/gpe-kie-remote/src/test/resources/StartProcess.xml http://bpmsapp-jbride.apps.ose.opentlc.com/business-central/rest/GPEKieResource/command
      */
-    
     @POST
-    @Path("/{deploymentId: .*}/{processId: .*}/pInstance")
+    @Path("/command")
     @Consumes(MediaType.APPLICATION_XML)
     @Produces({ "application/xml" })
-    public Response startProcessAndReturnInflightVars(@PathParam("deploymentId") final String deploymentId, 
-                                                      @PathParam("processId") final String processId ) {
+    public Response executeCommand(JaxbCommandsRequest cmdsRequest) {
         ResponseBuilder builder = null;
         try {
-            Map<String, List<String>> requestParams = getRequestParams(uriInfo);
-            String oper = getRelativePath(uriInfo);
-            Map<String, Object> params = extractMapFromParams(requestParams, oper);
-            System.out.println("startProcessAndReturnInflightVars() # of params = "+params.size()+" : oper = "+oper);
-            
-            Map<String, Object> returnMap = rProxy.startProcessAndReturnInflightVars(deploymentId, processId, params);
-            ProcessInstance procInst = (ProcessInstance)returnMap.get(IGPEKieService.PROCESS_INSTANCE);
-            Map<String, String> vars = new HashMap<String, String>();
-            for(Map.Entry<String, Object> param : returnMap.entrySet()){
-                System.out.println("param = "+param.getKey()+ " "+ param.getValue().toString());
-                if(!param.getKey().equals(IGPEKieService.PROCESS_INSTANCE)) {
-                    vars.put(param.getKey(), param.getValue().toString());
-                }
-            }
-            JaxbProcessInstanceWithVariablesResponse resp = new JaxbProcessInstanceWithVariablesResponse(procInst, vars, uriInfo.getRequestUri().toString());
-            return createCorrectVariant(resp, headers);
+        	log.info("executeCommand() # of cmdsRequest = "+cmdsRequest.getCommands().size());
+        	List<Command> commandList = cmdsRequest.getCommands();
+        	Map<String, Object> params = new HashMap<String, Object>();
+        	for(Command commandObj : commandList){
+        		if(commandObj instanceof StartProcessCommand){
+        			StartProcessCommand sCommand = (StartProcessCommand)commandObj;
+        			params = sCommand.getParameters();
+        			String deploymentId = cmdsRequest.getDeploymentId();
+        			String processId = sCommand.getProcessId();
+        			Map<String, Object> returnMap = rProxy.startProcessAndReturnInflightVars(deploymentId, processId, params);
+        			ProcessInstance procInst = (ProcessInstance)returnMap.get(IGPEKieService.PROCESS_INSTANCE);
+        			Map<String, String> vars = new HashMap<String, String>();
+        			for(Map.Entry<String, Object> param : returnMap.entrySet()){
+        				System.out.println("param = "+param.getKey()+ " "+ param.getValue().toString());
+        				if(!param.getKey().equals(IGPEKieService.PROCESS_INSTANCE)) {
+        					vars.put(param.getKey(), param.getValue().toString());
+        				}
+        			}
+        			JaxbProcessInstanceWithVariablesResponse resp = new JaxbProcessInstanceWithVariablesResponse(procInst, vars, uriInfo.getRequestUri().toString());
+        			return createCorrectVariant(resp, headers);
+        		}else {
+        			log.error("executeCommand() will not process command of type = "+ commandObj.getClass().toString());
+        			builder = Response.status(Status.BAD_REQUEST);
+        		}
+        	}
         } catch(Throwable x) {
             x.printStackTrace();
             builder = Response.status(Status.INTERNAL_SERVER_ERROR);
@@ -111,7 +119,7 @@ public class GPEKieResource extends ResourceBase {
     
     /**
      * sample usage :
-     *  curl -v -u jboss:brms -X GET docker_bpms:8080/business-central/rest/GPEKieResource/com.redhat.gpe.refarch.bpm_signalling:processTier:1.0/processes
+     *  curl -v -u jboss:brms -X GET bpmsapp-jbride.apps.ose.opentlc.com/business-central/rest/GPEKieResource/com.redhat.gpe.refarch.bpm_deployments:gpeExtProcessTier:1.0/processes
      */
     @GET
     @Path("/{deploymentId: .*}/processes")
@@ -126,9 +134,12 @@ public class GPEKieResource extends ResourceBase {
                 builder = Response.status(Status.NO_CONTENT);
             } else {
                 StringBuilder sBuilder = new StringBuilder("[");
+                int x = 0;
                 for(String processId : processList){
+                	x++;
                     sBuilder.append(processId);
-                    sBuilder.append(",");
+                    if(x != processList.size())
+                        sBuilder.append(",");
                 }
                 sBuilder.append("]");
                 builder = Response.ok(sBuilder.toString());
@@ -142,7 +153,7 @@ public class GPEKieResource extends ResourceBase {
     
     /**
      * sample usage :
-     *  curl -v -u jboss:brms -X GET docker_bpms:8080/business-central/rest/GPEKieResource/com.redhat.gpe.refarch.bpm_signalling:processTier:1.0/process/activenodes/259
+     *  curl -v -u jboss:brms -X GET docker_bpms:8080/business-central/rest/GPEKieResource/com.redhat.gpe.refarch.bpm_deployments:gpeExtProcessTier:1.0/process/activenodes/259
      */
     @GET
     @Path("/{deploymentId: .*}/process/activenodes/{pInstanceId: .*}")

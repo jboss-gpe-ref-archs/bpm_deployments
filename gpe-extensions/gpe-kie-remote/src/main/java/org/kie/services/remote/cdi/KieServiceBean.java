@@ -16,7 +16,6 @@
 
 package org.kie.services.remote.cdi;
 
-import java.security.Policy;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
