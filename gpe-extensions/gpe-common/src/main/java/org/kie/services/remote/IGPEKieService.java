@@ -24,9 +24,9 @@ import org.kie.services.remote.rest.graph.jaxb.ActiveNodeInfo;
 
 public interface IGPEKieService {
     
-	public static final String PROCESS_INSTANCE = "pInstance";
-	
-	public Map<String, Object> startProcessAndReturnInflightVars(String deploymentId, String processId, Map<String, Object> params);
-	public List<ActiveNodeInfo> getActiveNodeInfo(String deploymentId, String instanceId);
+    public static final String PROCESS_INSTANCE = "pInstance";
+    
+    public Map<String, Object> startProcessAndReturnInflightVars(String deploymentId, String processId, Map<String, Object> params);
+    public List<ActiveNodeInfo> getActiveNodeInfo(String deploymentId, String instanceId);
     public List<String> listProcesses(String deploymentId);
 }

@@ -50,7 +50,7 @@ public class KieService implements IGPEKieService {
     private IGPEKieService kieBean;
     
     public Map<String, Object> startProcessAndReturnInflightVars(String deploymentId, String processId, Map<String, Object> params) {
-    	return kieBean.startProcessAndReturnInflightVars(deploymentId, processId, params);
+        return kieBean.startProcessAndReturnInflightVars(deploymentId, processId, params);
     }
 
     public List<String> listProcesses(String deploymentId) {
@@ -59,11 +59,11 @@ public class KieService implements IGPEKieService {
     
     /*
     Caused by: java.lang.IllegalStateException: This persistence strategy only deals with UserTransaction instances!
-	at org.jbpm.process.audit.strategy.StandaloneJtaStrategy.commitTransaction(StandaloneJtaStrategy.java:98)
-	at org.jbpm.process.audit.strategy.StandaloneJtaStrategy.leaveTransaction(StandaloneJtaStrategy.java:89)
-	at org.jbpm.process.audit.JPAAuditLogService.closeEntityManager(JPAAuditLogService.java:335) 
-	at org.jbpm.process.audit.JPAAuditLogService.findProcessInstance(JPAAuditLogService.java:164
-	at org.kie.services.remote.cdi.KieServiceBean.getActiveNodeInfo(KieServiceBean.java:79) [gpe-kie-remote.jar:1.0]
+    at org.jbpm.process.audit.strategy.StandaloneJtaStrategy.commitTransaction(StandaloneJtaStrategy.java:98)
+    at org.jbpm.process.audit.strategy.StandaloneJtaStrategy.leaveTransaction(StandaloneJtaStrategy.java:89)
+    at org.jbpm.process.audit.JPAAuditLogService.closeEntityManager(JPAAuditLogService.java:335) 
+    at org.jbpm.process.audit.JPAAuditLogService.findProcessInstance(JPAAuditLogService.java:164
+    at org.kie.services.remote.cdi.KieServiceBean.getActiveNodeInfo(KieServiceBean.java:79) [gpe-kie-remote.jar:1.0]
      */
     @TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
     public List<ActiveNodeInfo> getActiveNodeInfo(String deploymentId, String instanceId) {

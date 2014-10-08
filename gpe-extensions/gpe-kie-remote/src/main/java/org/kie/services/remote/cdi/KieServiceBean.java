@@ -86,16 +86,16 @@ public class KieServiceBean extends ResourceBase implements IGPEKieService {
     public Map<String, Object> startProcessAndReturnInflightVars(String deploymentId, String processId, Map<String, Object> params) {
 
         WorkflowProcessInstanceImpl pInstance = (WorkflowProcessInstanceImpl)processRequestBean.doKieSessionOperation(
-        		new StartProcessCommand(processId, params), 
-        		deploymentId, 
-        		null,
-        		"Unable to start process with process definition id "+processId);
+                new StartProcessCommand(processId, params), 
+                deploymentId, 
+                null,
+                "Unable to start process with process definition id "+processId);
         Map<String, Object> variables = pInstance.getVariables();
 
-        // need to create new Map because the map from WorkflowProcessInstanceImple is immutable
+        // need to create new Map because the variables map available from WorkflowProcessInstanceImpl is immutable
         Map<String, Object> returnMap = new HashMap<String, Object>();
         for (String key : variables.keySet()) {
-        	logger.info("key = "+key+" : value = "+variables.get(key));
+            logger.info("key = "+key+" : value = "+variables.get(key));
             returnMap.put(key, variables.get(key));
         }
         returnMap.put(IGPEKieService.PROCESS_INSTANCE, pInstance);
@@ -105,17 +105,17 @@ public class KieServiceBean extends ResourceBase implements IGPEKieService {
     public List<String> listProcesses(String deploymentId){
         Command<?> cmd = new GetProcessIdsCommand();
         List<String> pList = (List<String>) processRequestBean.doKieSessionOperation(
-        		cmd, 
-        		deploymentId, 
-        		null,
-        		"Unable to list processes for deploymentId = "+deploymentId
-        		);
+                cmd, 
+                deploymentId, 
+                null,
+                "Unable to list processes for deploymentId = "+deploymentId
+                );
         return pList;
     }
     
     
     public List<ActiveNodeInfo> getActiveNodeInfo(String deploymentId, String instanceId) {
-    	AuditLogService auditLogService = new JPAAuditLogService(emf);
+        AuditLogService auditLogService = new JPAAuditLogService(emf);
         ProcessInstanceLog processInstance = auditLogService.findProcessInstance(new Long(instanceId));
         if (processInstance == null) {
             throw new IllegalArgumentException("Could not find process instance " + instanceId);
@@ -175,9 +175,9 @@ public class KieServiceBean extends ResourceBase implements IGPEKieService {
   
     private void addNodesInfo(List<DiagramNodeInfo> nodeInfos, Node[] nodes, String prefix) {
         for (Node node : nodes) {
-        	String uniqueId = org.jbpm.bpmn2.xml.XmlBPMNProcessDumper.getUniqueNodeId(node);
+            String uniqueId = org.jbpm.bpmn2.xml.XmlBPMNProcessDumper.getUniqueNodeId(node);
             nodeInfos.add(new DiagramNodeInfo(
-            		uniqueId,
+                    uniqueId,
                     (Integer)node.getMetaData().get("x"),
                     (Integer)node.getMetaData().get("y"),
                     (Integer)node.getMetaData().get("width"),

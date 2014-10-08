@@ -73,19 +73,23 @@ public class GPEKieResource extends ResourceBase {
     @Context
     protected UriInfo uriInfo;
     
+    
+    /*
+     * curl -v -u jboss:brms -X POST -H "Content-Type:application/xml" -d @gpe-extensions/gpe-kie-remote/src/test/resources/StartProcess.xml http://bpmsapp-jbride.apps.ose.opentlc.com/business-central/rest/GPEKieResource/com.redhat.gpe.refarch.bpm_deployments:gpeExtProcessTier:1.0/gpeExtProcessTier.modifyVars/pInstance
+     */
+    
     @POST
     @Path("/{deploymentId: .*}/{processId: .*}/pInstance")
-    //@Consumes(MediaType.APPLICATION_XML)
+    @Consumes(MediaType.APPLICATION_XML)
     @Produces({ "application/xml" })
     public Response startProcessAndReturnInflightVars(@PathParam("deploymentId") final String deploymentId, 
                                                       @PathParam("processId") final String processId ) {
         ResponseBuilder builder = null;
         try {
-           /* Map<String, List<String>> requestParams = getRequestParams(uriInfo);
+            Map<String, List<String>> requestParams = getRequestParams(uriInfo);
             String oper = getRelativePath(uriInfo);
-            System.out.println("startProcessAndReturnInflightVars() oper = "+oper);
-            Map<String, Object> params = extractMapFromParams(requestParams, oper);*/
-        	Map<String, Object> params = new HashMap<String, Object>();
+            Map<String, Object> params = extractMapFromParams(requestParams, oper);
+            System.out.println("startProcessAndReturnInflightVars() # of params = "+params.size()+" : oper = "+oper);
             
             Map<String, Object> returnMap = rProxy.startProcessAndReturnInflightVars(deploymentId, processId, params);
             ProcessInstance procInst = (ProcessInstance)returnMap.get(IGPEKieService.PROCESS_INSTANCE);
