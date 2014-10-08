@@ -3,9 +3,9 @@
 :bpmproduct: link:https://access.redhat.com/site/documentation/en-US/Red_Hat_JBoss_BPM_Suite/[Red Hat's BPM Suite 6 product]
 :dockerbpms: link:https://github.com/jboss-gpe-ose/docker_bpms/blob/master/doc/userguide.adoc[docker_bpms]
 :osebpms: link:https://github.com/jboss-gpe-ose/openshift-origin-cartridge-bpms-full/blob/master/doc/cart_doc.adoc[OpenShift BPM cartridge]
-:bpmsignalling: link:https://github.com/jboss-gpe-ref-archs/bpm_signalling[BPM Signalling project]
 :bpmmvn: link:https://access.redhat.com/documentation/en-US/Red_Hat_JBoss_BPM_Suite/6.0/html-single/Installation_Guide/index.html#The_JBoss_Integration_Maven_Repository[provided BPM Suite 6 Maven Repositories]
 :mwlaboverviewsetup: link:http://people.redhat.com/jbride/labsCommon/setup.html[Middleware Lab Overview and Set-up]
+:bz1108738: link://https://bugzilla.redhat.com/show_bug.cgi?id=1108738[Bugzilla 1108738]
 
 image::images/rhheader.png[width=900]
 
@@ -21,6 +21,17 @@ This ability was available in BRMS 5.3.1.
 However, as of BPM Suite 6.0.3, equivalent functionality is not included out-of-the-box.
 
 Currently, the GPE Extensions project provides the following additional functions :
+
+. *startProcessAndReturnInflightVars*
++
+Start a BPMN2 process instance and include process instance variable state in the response back to the client.
++
+This is ideal for the use-case discussed in comment #3 of {bz1108738} :
+
+.. The BPMN2 process does not define a wait-state (subsequently there is an opportunity to potentially use an in-memory KIE session strategy)
+.. BAM is not necessary and is subsequently is disabled
+.. pInstance vars are modified during execution of nodes
+.. The final values of those modified pInstance variables are desired
 
 . *listProcesses*
 +
@@ -132,14 +143,21 @@ For the purposes of the remainder of these instructions, this directory on your 
 Doing so will clone this `bpm_deployments` project to your local disk
 
 . In JBDS, switch to the `Project Explorer` panel and navigate to:  `File -> Import -> Maven -> Existing Maven Projects`
-. In the `Root Directory` field of the `Maven Projects` pop-up, navigate to the location on disk where the `bpm_deployments` project was just cloned to.
+. In the `Root Directory` field of the `Maven Projects` pop-up, navigate to the location on disk where the `bpm_deployments` project was just cloned to and select the `gpe-extensions` sub-project.
++
+image::images/gpeextensionmvnimport.png[]
+
 . Click `next` through the various pop-up panels and finally `Finish`.
 . Your `Project Explorer` panel should now include the following mavenized projects
 +
-image::images/maven_projects.png[]
+image::images/gpeextensionmvnprojects.png[]
 
 === local: Build the Reference Architecture
 The $REF_ARCH_HOME/gpe-extensions directory contains sub-modules that extend the BPM Suite 6 Execution Server:
+
+. *domain*
++
+Contains a `Driver` class that is used for testing this `gpe-extensions` reference architecture
 
 . *gpe-common*
 +
@@ -148,14 +166,20 @@ Contains a Java interface that defines functions that extend the BPM Suite 6 Exe
 . *gpe-kie-remote*
 +
 Contains a CDI bean, EJB service and JAX-RS based RESTful resource.
++
+image::images/gpekieremotearch.png[]
++
 This functionality builds off each-other.
-The CDI bean directly extends the BPM Suite 6 Execution Server.
-The EJB service is a wrapper around the CDI bean, introduces transaction boundaries and provides a light-weight remoting API that EJB clients can invoke (optional).
-The JAX-RS is a wrapper around the EJB service and exposes GPE Extension functions as RESTful resources.
++
+`KieServiceBean` is a CDI bean that directly extends the BPM Suite 6 Execution Server.
++
+`KieService` is an EJB wrapper around the CDI bean and introduces transaction boundaries and provides a light-weight remoting API that EJB clients can invoke directly(optional).
++
+`GPEKieResource` is a JAX-RS wrapper around the EJB service and exposes GPE Extension functions as RESTful resources.
 
 To build the gpe-extensions project, execute the following:
 
-. In the `Project Explorer` panel of JBDS, right-click on the `parent` project
+. In the `Project Explorer` panel of JBDS, right-click on the `gpe-extensions` project
 . Navigate to: `Run As -> Maven Install`
 . In the `Console` panel, a `BUILD SUCCESS` log message should appear.
 +
@@ -163,29 +187,31 @@ image::images/maven_build_success.png[]
 +
 The end result are the following jar files:
 
+** $REF_ARCH_HOME/gpe-extensions/domain/target/gpeExtDomain.jar
 ** $REF_ARCH_HOME/gpe-extensions/gpe-common/target/gpe-common-deployment.jar
 ** $REF_ARCH_HOME/gpe-extensions/gpe-kie-remote/target/gpe-kie-remote.jar
 
-=== BPM Suite 6:  Deployment
+=== BPM Suite 6:  GPE Extensions Deployment
 
 The GPE Extension artifacts that were previously built need to be deployed to the java classpath of BPM Suite 6 .
 Do so as follows using the secure copy utility:
 
 . Repeat these steps for the following artifacts
 
+* $REF_ARCH_HOME/gpe-extensions/domain/target/gpeExtDomain.jar
 * $REF_ARCH_HOME/gpe-extensions/gpe-common/target/gpe-common-deployment.jar
 * $REF_ARCH_HOME/gpe-extensions/gpe-kie-remote/target/gpe-kie-remote.jar
 
-.. In the `Project Explorer` panel of the `JBOSS` perspective of JBDS, right-click on the `domain/target/bpm_rulesMgmt_domain.jar` in `Project Explorer` and select `Copy`.
+.. In the `Project Explorer` panel of the `JBOSS` perspective of JBDS, right-click on the `domain/target/gpeExtDomain.jar` in `Project Explorer` and select `Copy`.
 +
-image::images/copyjar.png[]
+image::images/copygpeextjar.png[]
 
 .. In the `Remote System Explorer` perspective of JBDS, navigate to `bpmsapp-<your domain>.apps.ose.opentlc.com -> Sftp Files -> My Home -> bpms -> standalone -> deployments -> business-central.war -> WEB-INF -> lib`
 .. Right-click and select `Paste`
 +
 image::images/pastedomainjarintobizcentral.png[]
 
-. Once both artifacts have been added to the `WEB-INF/lib` directory of your remote BPM Suite 6 app, re-start the JVM:
+. Once all 3 artifacts have been added to the `WEB-INF/lib` directory of your remote BPM Suite 6 app, re-start the JVM:
 .. Switch back to the `OpenShift Explorer` plugin of JBDS and right-click the `bpmsapp` application
 .. Select `Restart Application`
 . Once BPM Suite 6 starts back up, switch to the `Remote System Explorer` and ssh into your BPM Suite 6 enabled gear.
@@ -205,78 +231,104 @@ INFO  [org.jboss.as.ejb3.deployment.processors.EjbJndiBindingsDeploymentUnitProc
 This log entry indicates the GPE Extension EJB has been bound to JNDI and all is well.
 We are now ready to test the new functionality.
 
-== *List Processes* Test
+=== BPM Suite 6:  Clone this reference architecture
+This reference architecture has a simple BPMN2 process definition that can be used to to test our new GPE Extension functions.
++
+image::modifyvars.png[]
 
-.  Log into the BPM Console of BPM Suite 6 and either create or use an existing KIE project.
-.  If the KIE project does not already include BPMN2 process definitions, create a few (doesn't have to be elaborate).
-.. Make note of the Ids of your various BPMN2 processes.
-.  Deploy your KIE project via the *Build and Deploy* button provided by the _Project Explorer_ panel of BPM Console.
-.. Make note of the maven GroupId, ArtifactId and Version (GAV) identifier of the deployed project
+Use the following steps to clone this reference architecture in BPM Suite 6:
+
+. Log into the `BPM Console`  web application of BPM Suite 6
++
+The userId to use is:  `jboss`  and the password to use is:  `brms`
+
+. navigate to:  Authoring -> Administration.
+. Select `Organizational Units` -> `Manage Organizational Units`
+. Under `Organizational Unit Manager`, select the `Add` button
+. Enter a name of _gpe_ and an owner of _jboss_. Click `OK`
+. Clone this `bpm_deployments` git repository in BPM Suite 6
+.. Select `Repositories` -> `Clone Repository` .
+.. Populate the _Clone Repository_ box as follows and then click _Clone_ :
+
+image::images/clone_repo.png[]
+
+Enter _bpmdeployments as the value of the _repository name_.
+The value of _Git URL_ is the URL to this reference architecture in github:
+
+-----
+https://github.com/jboss-gpe-ref-archs/bpm_deployments.git
+-----
+
+Once successfully cloned, BPM Suite 6 will pop-up a new dialog box with the message:  _The repository is cloned successfully_
+
+=== BPM Suite 6:  Build and Deploy _soaProcessTier_ project
+Build and Deploy the _soaProcessTier_ project by executing the following:
+
+. Navigate to `Authoring -> Project Authoring`
+. In the `Project Explorer` panel, ensure that `gpe -> bpmdeployments -> gpeExtProcessTier` is selected
++
+image::images/gpeextprojexplorer.png[]
+
+. Navigate to `Authoring -> Project Authoring -> Tools -> Project Editor`
+. In the `Project Editor` panel, click `Build and Deploy`
+
+== Test
+
+cd $REF_ARCH_HOME
+
+=== *Start Process And Return Inflight Vars*
+
+. In your local environment, execute the following RESTful command:
++
+-----
+curl -v -u jboss:brms -X POST -H "Content-Type:application/xml" -d @gpe-extensions/gpe-kie-remote/src/test/resources/StartProcess.xml http://<bpm-server-url>/business-central/rest/GPEKieResource/command
+-----
++
+Note: Replace <server-url> with the actual URL of your remote BPM Suite 6 server
+
+. The response back should include modified process instance variables
++
+image::images/modifiedvarresponse.png[]
+
+=== *List Processes* Test
+
 .  In your local environment, execute the following RESTful query:
-
++
 -----
-curl -v -u jboss:brms -X GET <bpm-server-url>/business-central/rest/GPEKieResource/<project-GAV>/processes
+curl -v -u jboss:brms -X GET <bpm-server-url>/business-central/rest/GPEKieResource/com.redhat.gpe.refarch.bpm_deployments:gpeExtProcessTier:1.0/processes
 -----
-
-** Replace <server-url> with the actual URL of your remote BPM Suite 6 server
-** Replace <project-GAV> with the actual GAV of your project
++
+Note: Replace <server-url> with the actual URL of your remote BPM Suite 6 server
 
 The HTTP response payload from invoking the new RESTful resource should include a list of ids (in JSON array format) of BPMN2 processes that have been registered with the KieBase corresponding to your Kie Project.
 These process Ids should correspond with what was identified in step #2.
 
 
-== *GetActiveNodeInfo* Test
+=== *GetActiveNodeInfo* Test
+In the `Start Process And Return Inflight Vars` test, an instance of the `modifyVars` BPMN2 was instantiated.
+Lets now retrieve the details of the active node of the current process instance.
 
-. Log into the BPM Console of BPM Suite 6 and clone, build & deploy the {bpmsignalling}.
-. Start an instance of the _ConcurrentPInstanceSignal_ BPMN2 process definition.
-. Make note of the Id of the new process instance.
-. The new process instance should have 3 active nodes:
-
-+
-image::images/concurrentpinstanceactivenodes.png[]
-
-+
-. To retrieve an XML list of these active nodes, execute the following :
-
+. From the response from the `Start Process And Return Inflight Vars' test, make note of the Id of the new process instance.
+. To retrieve an XML list of the active node, execute the following :
 +
 -----
-curl -v -u jboss:brms -X GET <bpm-server_url>:8080/business-central/rest/GPEKieResource/com.redhat.gpe.refarch.bpm_signalling:processTier:1.0/process/activenodes/<pInstanceId>
+curl -v -u jboss:brms -X GET <bpm-server-url>/business-central/rest/GPEKieResource/com.redhat.gpe.refarch.bpm_deployments:gpeExtProcessTier:1.0/process/activenodes/<pInstanceId>
 -----
++
+Note: Replace <server-url> with the actual URL of your remote BPM Suite 6 server
 
 . The response body returned to the client should include a list of active node information.
 This information is needed to diagram the state of a process instance.
-
++
 -----
 <activeNodeInfoList>
     <activeNodeInfo>
         <activeNode>
-            <height>30</height>
-            <name>_974632FD-1543-423B-A670-DB4FBD181991</name>
-            <width>30</width>
-            <x>98</x>
-            <y>60</y>
-        </activeNode>
-        <diagramHeight>541</diagramHeight>
-        <diagramWidth>932</diagramWidth>
-    </activeNodeInfo>
-    <activeNodeInfo>
-        <activeNode>
-            <height>30</height>
-            <name>_165803BC-CFA0-43E6-9FC6-86DC1DA0CCEF</name>
-            <width>30</width>
-            <x>98</x>
-            <y>269</y>
-        </activeNode>
-        <diagramHeight>541</diagramHeight>
-        <diagramWidth>932</diagramWidth>
-    </activeNodeInfo>
-    <activeNodeInfo>
-        <activeNode>
-            <height>73</height>
-            <name>_83254FE3-F98F-4B22-AB5D-C5188A405121</name>
-            <width>125</width>
-            <x>159</x>
-            <y>133</y>
+            <height>80</height>
+            <name>_D6557EE3-C29B-4FD8-AD44-9BEC70208A53</name>
+            <width>100</width>
+            <x>345</x>
+            <y>140</y>
         </activeNode>
         <diagramHeight>541</diagramHeight>
         <diagramWidth>932</diagramWidth>

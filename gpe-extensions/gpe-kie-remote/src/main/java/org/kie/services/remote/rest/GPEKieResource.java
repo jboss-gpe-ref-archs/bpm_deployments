@@ -85,31 +85,31 @@ public class GPEKieResource extends ResourceBase {
     public Response executeCommand(JaxbCommandsRequest cmdsRequest) {
         ResponseBuilder builder = null;
         try {
-        	log.info("executeCommand() # of cmdsRequest = "+cmdsRequest.getCommands().size());
-        	List<Command> commandList = cmdsRequest.getCommands();
-        	Map<String, Object> params = new HashMap<String, Object>();
-        	for(Command commandObj : commandList){
-        		if(commandObj instanceof StartProcessCommand){
-        			StartProcessCommand sCommand = (StartProcessCommand)commandObj;
-        			params = sCommand.getParameters();
-        			String deploymentId = cmdsRequest.getDeploymentId();
-        			String processId = sCommand.getProcessId();
-        			Map<String, Object> returnMap = rProxy.startProcessAndReturnInflightVars(deploymentId, processId, params);
-        			ProcessInstance procInst = (ProcessInstance)returnMap.get(IGPEKieService.PROCESS_INSTANCE);
-        			Map<String, String> vars = new HashMap<String, String>();
-        			for(Map.Entry<String, Object> param : returnMap.entrySet()){
-        				System.out.println("param = "+param.getKey()+ " "+ param.getValue().toString());
-        				if(!param.getKey().equals(IGPEKieService.PROCESS_INSTANCE)) {
-        					vars.put(param.getKey(), param.getValue().toString());
-        				}
-        			}
-        			JaxbProcessInstanceWithVariablesResponse resp = new JaxbProcessInstanceWithVariablesResponse(procInst, vars, uriInfo.getRequestUri().toString());
-        			return createCorrectVariant(resp, headers);
-        		}else {
-        			log.error("executeCommand() will not process command of type = "+ commandObj.getClass().toString());
-        			builder = Response.status(Status.BAD_REQUEST);
-        		}
-        	}
+            log.info("executeCommand() # of cmdsRequest = "+cmdsRequest.getCommands().size());
+            List<Command> commandList = cmdsRequest.getCommands();
+            Map<String, Object> params = new HashMap<String, Object>();
+            for(Command commandObj : commandList){
+                if(commandObj instanceof StartProcessCommand){
+                    StartProcessCommand sCommand = (StartProcessCommand)commandObj;
+                    params = sCommand.getParameters();
+                    String deploymentId = cmdsRequest.getDeploymentId();
+                    String processId = sCommand.getProcessId();
+                    Map<String, Object> returnMap = rProxy.startProcessAndReturnInflightVars(deploymentId, processId, params);
+                    ProcessInstance procInst = (ProcessInstance)returnMap.get(IGPEKieService.PROCESS_INSTANCE);
+                    Map<String, String> vars = new HashMap<String, String>();
+                    for(Map.Entry<String, Object> param : returnMap.entrySet()){
+                        System.out.println("param = "+param.getKey()+ " "+ param.getValue().toString());
+                        if(!param.getKey().equals(IGPEKieService.PROCESS_INSTANCE)) {
+                            vars.put(param.getKey(), param.getValue().toString());
+                        }
+                    }
+                    JaxbProcessInstanceWithVariablesResponse resp = new JaxbProcessInstanceWithVariablesResponse(procInst, vars, uriInfo.getRequestUri().toString());
+                    return createCorrectVariant(resp, headers);
+                }else {
+                    log.error("executeCommand() will not process command of type = "+ commandObj.getClass().toString());
+                    builder = Response.status(Status.BAD_REQUEST);
+                }
+            }
         } catch(Throwable x) {
             x.printStackTrace();
             builder = Response.status(Status.INTERNAL_SERVER_ERROR);
@@ -136,7 +136,7 @@ public class GPEKieResource extends ResourceBase {
                 StringBuilder sBuilder = new StringBuilder("[");
                 int x = 0;
                 for(String processId : processList){
-                	x++;
+                    x++;
                     sBuilder.append(processId);
                     if(x != processList.size())
                         sBuilder.append(",");

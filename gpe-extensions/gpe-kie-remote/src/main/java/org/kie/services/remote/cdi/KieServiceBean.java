@@ -82,6 +82,13 @@ public class KieServiceBean extends ResourceBase implements IGPEKieService {
         }
     }
     
+    /*
+    This is ideal for the use-case discussed in comment #3 of bz 1108738 :
+    	1) The BPMN2 process does not define a wait-state (subsequently there is an opportunity to potentially use an in-memory KIE session strategy)
+    	2) BAM is not necessary and is subsequently is disabled
+    	3) pInstance vars are modified during execution of nodes
+    	4) The final values of those modified pInstance variables are desired
+    */
     public Map<String, Object> startProcessAndReturnInflightVars(String deploymentId, String processId, Map<String, Object> params) {
 
         WorkflowProcessInstanceImpl pInstance = (WorkflowProcessInstanceImpl)processRequestBean.doKieSessionOperation(
