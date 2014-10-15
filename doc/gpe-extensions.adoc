@@ -6,6 +6,7 @@
 :bpmmvn: link:https://access.redhat.com/documentation/en-US/Red_Hat_JBoss_BPM_Suite/6.0/html-single/Installation_Guide/index.html#The_JBoss_Integration_Maven_Repository[provided BPM Suite 6 Maven Repositories]
 :mwlaboverviewsetup: link:http://people.redhat.com/jbride/labsCommon/setup.html[Middleware Lab Overview and Set-up]
 :bz1108738: link://https://bugzilla.redhat.com/show_bug.cgi?id=1108738[Bugzilla 1108738]
+:bpmspl-74: link:https://issues.jboss.org/browse/BPMSPL-74[BPMSPL-74]
 
 image::images/rhheader.png[width=900]
 
@@ -41,6 +42,9 @@ Given a deploymentId, return an array (in JSON format) of ids of BPMN2 processes
 +
 Given a deploymentId and process instance Id, return an XML list of _ActiveNodeInfo_ elements.
 This function is useful for diagraming the current state of process instances. 
+This function was available in BRMS5.3* however it (nor an equivalent) is included in BPM Suite 6.0.*.
++
+{bpmspl-74} tracks the status of providing the ability to embed Process Status diagrams in an external application in BPM Suite 6.1.*.
 
 == LEGAL
 
