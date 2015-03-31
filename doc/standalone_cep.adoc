@@ -1,0 +1,124 @@
+= *Standalone Complex Event Processing*
+
+:data-uri:
+:toc: manual
+:toc-placement: preamble
+:droolsjavadoc: link:https://docs.jboss.org/drools/release/latest/kie-api-javadoc/[Drools Java API]
+:bpmproduct: link:https://access.redhat.com/site/documentation/en-US/Red_Hat_JBoss_BPM_Suite/[Red Hat's BPM Suite 6 product]
+:numbered:
+
+Standalone Complex Event Processing Quickstart using JBoss BRM Suite 6.1 libraries
+
+== Overview
+
+Red Hat sells subscriptions to its fully supported Business Rules Management System (BRMS).
+The default deployment of this product is as a web application executing on the JBoss Enterprise Application Platform (EAP).
+Interaction to this _BRMS server_ is typically via its REST APIs.
+This default _BRMS server_ deployment toplogy is ideal for many large enterprise scenarios where it is ideal to have the rules engine centrallized, optimized and configured for high-availability.
+
+Red Hat's BRMS product is, however, also fully supported when embedded directly in a business application.
+The business application would, in this case, make direct use of the {droolsjavadoc}.
+
+The purpose of this quickstart is to demonstrate creation and execution of a mavenized _Complex Event Processing_ (CEP) project using supported JBoss BRMS libraries.
+This CEP project could then be leveraged in the source code of a business application that is need of embedding BRMS and invoking its CEP engine.
+
+== Configure Local Maven Reporties
+This project will make use of JBoss BRMS 6.1 libraries.
+
+[NOTE]
+JBoss BRMS 6.1 is currently available as part of the _Early Adopter_ program.
+Contact your Red Hat account manager to apply to this _Early Adopter_ program.
+
+=== Acquire Red Hat Maven Repositories
+This quickstart will make use of supported Maven repositories installed on your local workstation.
+In particular, the following is needed:
+
+. jboss-brms-bpmsuite-6.1.0.GA-maven-repository.zip
+
+[NOTE]
+While BRMS 6.1 is only avaialable from the _Early Adopter_ program, request this zip of mavenized BRMS libraries from your Red Hat account manager.
+
+Once downloaded, unzip :
+
+-----
+unzip jboss-brms-bpmsuite-6.1.0.GA-maven-repository.zip -d /path/to/repo
+-----
+
+[NOTE]
+Replace _/path/to/repo_ with your preferred location on your local workstation for managing Maven repositories.
+
+=== Maven settings.xml
+
+The BxMS Maven repo includes a sample settings.xml at:
+
+-----
+/path/to/repo/jboss-brms-bpmsuite-6.1.0.GA-redhat-1-maven-repository/example-settings.xml
+-----
+
+In your favorite text editor, open that file and make the following changes:
+
+. Modify all occurrances of BRMS release #
+.. *OLD Value*: _jboss-brms-bpmsuite-6.1.0.GA-redhat-1-maven-repository_
+.. *NEW Value*: _jboss-brms-bpmsuite-6.1.0.GA-redhat-3-maven-repository_
+
+. Modify path to unzipped local BxMS repo
++
+image::images/example_settings.png[]
+
+== Create Maven Project
+
+. Create a simple CEP project with dependencies on supported BxMS libraries:
++
+-----
+mvn archetype:generate \
+    -DarchetypeGroupId=org.kie \
+    -DarchetypeArtifactId=kie-drools-archetype \
+    -DgroupId=org.acme \
+    -DartifactId=drools_cep \
+    -Dversion=1.0 \
+    -DexampleWithCEP \
+    -DpomEclipseCompatible \
+    -Dslf4jVersion=1.7.2 \
+    -DinteractiveMode=false \
+    -DdroolsVersion=6.2.0.Final-redhat-3
+-----
++
+After a while (depending on download speeds of your network), a new directory called _drools_cep_ should be created.
+. cd drools_cep
+. mvn clean install -DskipTests -s /path/to/repo/example-settings.xml
++
+This command will compile and install the _drools_cep_ project.
+
+== Execute Standalone CEP Test
+The new mavenized _drools_cep_ project previously created contains a JUnit test class that demonstrates use of the BRMS CEP engine.
+Execute this test as follows:
+
+. cd /path/to/new/drools_cep
+. mvn clean test
++
+In your terminal window, you should see the following :
++
+-----
+2015-03-31 12:26:30,127 INFO  [org.acme.RuleTest] (main) Creating kieBase with STREAM option
+2015-03-31 12:26:30,226 INFO  [org.acme.RuleTest] (main) There should be rules:
+2015-03-31 12:26:30,226 INFO  [org.acme.RuleTest] (main) kp [Package name=org.acme] rule colors seen in the last 2 minutes
+2015-03-31 12:26:30,226 INFO  [org.acme.RuleTest] (main) Creating kieSession
+2015-03-31 12:26:30,314 INFO  [org.acme.RuleTest] (main) Populating globals
+2015-03-31 12:26:30,314 INFO  [org.acme.RuleTest] (main) Now running data
+2015-03-31 12:26:30,334 INFO  [org.acme.RuleTest] (main) Final checks
+Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 1.096 sec - in org.acme.RuleTest
+-----
+
+Congratulations!  You have successfully created and executed a simple BRMS project that makes use of the CEP engine.
+
+== Review pertinent project artifacts:
+
+=== pom.xml
+
+=== rules.drl
+
+=== org.acme.RulesTest
+
+ifdef::showscript[]
+
+endif::showscript[]
