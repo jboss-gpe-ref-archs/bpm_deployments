@@ -5,6 +5,7 @@
 :toc-placement: preamble
 :droolsjavadoc: link:https://docs.jboss.org/drools/release/latest/kie-api-javadoc/[Drools Java API]
 :bpmproduct: link:https://access.redhat.com/site/documentation/en-US/Red_Hat_JBoss_BPM_Suite/[Red Hat's BPM Suite 6 product]
+:cepdocs: link:https://access.redhat.com/documentation/en-US/Red_Hat_JBoss_BRMS/6.0/html-single/Development_Guide/index.html#chap-Complex_Event_Processing[complex event processing]
 :numbered:
 
 Standalone Complex Event Processing Quickstart using JBoss BRM Suite 6.1 libraries
@@ -14,15 +15,26 @@ Standalone Complex Event Processing Quickstart using JBoss BRM Suite 6.1 librari
 Red Hat sells subscriptions to its fully supported Business Rules Management System (BRMS).
 The default deployment of this product is as a web application executing on the JBoss Enterprise Application Platform (EAP).
 Interaction to this _BRMS server_ is typically via its REST APIs.
-This default _BRMS server_ deployment toplogy is ideal for many large enterprise scenarios where it is ideal to have the rules engine centrallized, optimized and configured for high-availability.
+This default _BRMS server_ deployment topology is ideal for many large enterprise scenarios where it is ideal to have the rules engine centralized, optimized and configured for high-availability.
 
 Red Hat's BRMS product is, however, also fully supported when embedded directly in a business application.
 The business application would, in this case, make direct use of the {droolsjavadoc}.
 
+=== Purpose
 The purpose of this quickstart is to demonstrate creation and execution of a mavenized _Complex Event Processing_ (CEP) project using supported JBoss BRMS libraries.
 This CEP project could then be leveraged in the source code of a business application that is need of embedding BRMS and invoking its CEP engine.
 
-== Configure Local Maven Reporties
+=== Prerequisites
+
+. Experience with the rules and CEP engines of BRMS
++
+The CEP engine is discussed in length in Red Hat GPE's _Business Logic Developer_ course.
++
+In addition, the following is developer documentation on {cepdocs} using BRMS.
+. maven v3.0.3 (or more recent) installed on your local workstation
+. JDK 1.7 (or more recent) installed on your local workstation
+
+== Configure Local Maven Repositories
 This project will make use of JBoss BRMS 6.1 libraries.
 
 [NOTE]
@@ -36,7 +48,7 @@ In particular, the following is needed:
 . jboss-brms-bpmsuite-6.1.0.GA-maven-repository.zip
 
 [NOTE]
-While BRMS 6.1 is only avaialable from the _Early Adopter_ program, request this zip of mavenized BRMS libraries from your Red Hat account manager.
+While BRMS 6.1 is only available from the _Early Adopter_ program, request this zip of mavenized BRMS libraries from your Red Hat account manager.
 
 Once downloaded, unzip :
 
@@ -57,7 +69,7 @@ The BxMS Maven repo includes a sample settings.xml at:
 
 In your favorite text editor, open that file and make the following changes:
 
-. Modify all occurrances of BRMS release #
+. Modify all occurrences of BRMS release #
 .. *OLD Value*: _jboss-brms-bpmsuite-6.1.0.GA-redhat-1-maven-repository_
 .. *NEW Value*: _jboss-brms-bpmsuite-6.1.0.GA-redhat-3-maven-repository_
 
@@ -115,9 +127,34 @@ Congratulations!  You have successfully created and executed a simple BRMS proje
 
 === pom.xml
 
-=== rules.drl
+The _drools_cep/pom.xml_ defines dependencies and versions that you'll want to include in the maven configurations of your business application.
 
-=== org.acme.RulesTest
+. *drools-version*
++
+Notice that the value corresponds to the _droolsVersion_ system property specified previously when the maven archetype command was executed:
++
+-----
+ <drools-version>6.2.0.Final-redhat-3</drools-version>
+-----
+
+. *dependencyManagement*
++
+The supported BxMS supported Maven repository includes a single bill of materials (BOM) artifact that greatly simplifies configuration of maven dependencies.
++
+-----
+ 21         <dependencyManagement>
+ 22                 <dependencies>
+ 23                         <dependency>
+ 24                                 <groupId>org.drools</groupId>
+ 25                                 <artifactId>drools-bom</artifactId>
+ 26                                 <type>pom</type>
+ 27                                 <version>${drools-version}</version>
+ 28                                 <scope>import</scope>
+ 29                         </dependency>
+ 30                 </dependencies>
+ 31         </dependencyManagement>
+-----
+
 
 ifdef::showscript[]
 
