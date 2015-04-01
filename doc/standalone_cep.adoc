@@ -37,21 +37,20 @@ In addition, the following is developer documentation on {cepdocs} using BRMS.
 [NOTE]
 Older versions of maven (tested on RHEL 7) are known to not work with this quickstart.
 
-== Configure Local Maven Repositories
+== Configure Local BxMS Maven Repository
 This project will make use of JBoss BRMS 6.1 libraries.
 
 [NOTE]
 JBoss BRMS 6.1 is currently available as part of the _Early Adopter_ program.
-Contact your Red Hat account manager to apply to this _Early Adopter_ program.
+Contact your Red Hat account manager to apply to this program.
 
 === Acquire Red Hat Maven Repositories
-This quickstart will make use of supported Maven repositories installed on your local workstation.
-In particular, the following is needed:
+This quickstart will make use of a supported BxMS Maven repository installed on your local workstation.
 
-. jboss-brms-bpmsuite-6.1.0.GA-maven-repository.zip
+In particular: *jboss-brms-bpmsuite-6.1.0.GA-maven-repository.zip*
 
 [NOTE]
-While BRMS 6.1 is only available from the _Early Adopter_ program, request this zip of mavenized BRMS libraries from your Red Hat account manager.
+Because BRMS 6.1 is only available from the _Early Adopter_ program, request this zip of mavenized BRMS libraries from your Red Hat account manager.
 
 Once downloaded, unzip :
 
@@ -74,16 +73,17 @@ In your favorite text editor, open that file and make the following changes:
 
 . Add a <localRepository> element
 +
-In order to not interfere with any existing local maven repositories that may already be on your workstation, a _localRepository> tag can be included
+In order to not interfere with any existing local maven repositories that may already be on your workstation (typically ~/.m2/repository), a _localRepository> tag should be added:
 +
 image::images/localrepotag.png[]
++
+Replace _/path/to/maven_ with the preferred location on your local workstation for managing Maven repositories.
 
 . Modify path to unzipped local BxMS repo
 +
 image::images/example_settings.png[]
 +
-[NOTE]
-Replace _/path/to/maven_ with the preferred location on your local workstation for managing Maven repositories.
+Replace _/path/to/repo with the path that the BxMS Maven repo download was unzipped to.
 
 == Create Maven Project
 
@@ -120,7 +120,8 @@ As mentioned in the pre-reqs, ensure use of a recent version of Maven on your $P
 . mvn clean install -DskipTests -s /path/to/repo/example-settings.xml
 +
 This command will compile and install the _drools_cep_ project.
-After a while, you should see the statement: _BUILD SUCCESS_ .<F2>
++
+After a while, you should see the statement: _BUILD SUCCESS_ .
 
 == Execute Standalone CEP Test
 The new mavenized _drools_cep_ project previously created contains a JUnit test class that demonstrates use of the BRMS CEP engine.
@@ -141,6 +142,11 @@ In your terminal window, you should see the following :
 2015-03-31 12:26:30,334 INFO  [org.acme.RuleTest] (main) Final checks
 Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 1.096 sec - in org.acme.RuleTest
 -----
+. Review the following quickstart functionality to understand the CEP test:
+.. `drools_cep/src/main/resources/rules.drl`
+.. `drools_cep/src/test/java/org/acme/RuleTest.java`
++
+Notice the use of the KIE / Drools Java API in this class to initialize a KnowledgeBase and drive the CEP engine using a _pseudo_ clock.
 
 Congratulations!  You have successfully created and executed a simple BRMS project that makes use of the CEP engine.
 
