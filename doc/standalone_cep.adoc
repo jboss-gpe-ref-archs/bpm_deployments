@@ -182,7 +182,7 @@ The supported BxMS supported Maven repository includes a single bill of material
  31         </dependencyManagement>
 -----
 +
-This _drools-bpm_ should also be present in the _dependencyManagement_ section of your business application's maven configuration.
+This _drools-bom_ maven artifact should be included in the _dependencyManagement_ section of your business application's maven configuration.
 
 
 ifdef::showscript[]
