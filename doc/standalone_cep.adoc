@@ -20,19 +20,22 @@ This default _BRMS server_ deployment topology is ideal for many large enterpris
 Red Hat's BRMS product is, however, also fully supported when embedded directly in a business application.
 The business application would, in this case, make direct use of the {droolsjavadoc}.
 
-=== Purpose
+== Purpose
 The purpose of this quickstart is to demonstrate creation and execution of a mavenized _Complex Event Processing_ (CEP) project using supported JBoss BRMS libraries.
 This CEP project could then be leveraged in the source code of a business application that is need of embedding BRMS and invoking its CEP engine.
 
-=== Prerequisites
+== Prerequisites
 
 . Experience with the rules and CEP engines of BRMS
 +
 The CEP engine is discussed in length in Red Hat GPE's _Business Logic Developer_ course.
 +
 In addition, the following is developer documentation on {cepdocs} using BRMS.
-. maven v3.0.3 (or more recent) installed on your local workstation
 . JDK 1.7 (or more recent) installed on your local workstation
+. maven v3.2.5 (or more recent ... ie:  3.3.1) installed on your local workstation
++
+[NOTE]
+Older versions of maven (tested on RHEL 7) are known to not work with this quickstart.
 
 == Configure Local Maven Repositories
 This project will make use of JBoss BRMS 6.1 libraries.
@@ -57,7 +60,7 @@ unzip jboss-brms-bpmsuite-6.1.0.GA-maven-repository.zip -d /path/to/repo
 -----
 
 [NOTE]
-Replace _/path/to/repo_ with your preferred location on your local workstation for managing Maven repositories.
+Replace _/path/to/repo_ with the preferred location on your local workstation for managing Maven repositories.
 
 === Maven settings.xml
 
@@ -69,13 +72,18 @@ The BxMS Maven repo includes a sample settings.xml at:
 
 In your favorite text editor, open that file and make the following changes:
 
-. Modify all occurrences of BRMS release #
-.. *OLD Value*: _jboss-brms-bpmsuite-6.1.0.GA-redhat-1-maven-repository_
-.. *NEW Value*: _jboss-brms-bpmsuite-6.1.0.GA-redhat-3-maven-repository_
+. Add a <localRepository> element
++
+In order to not interfere with any existing local maven repositories that may already be on your workstation, a _localRepository> tag can be included
++
+image::images/localrepotag.png[]
 
 . Modify path to unzipped local BxMS repo
 +
 image::images/example_settings.png[]
++
+[NOTE]
+Replace _/path/to/maven_ with the preferred location on your local workstation for managing Maven repositories.
 
 == Create Maven Project
 
@@ -97,9 +105,22 @@ mvn archetype:generate \
 +
 After a while (depending on download speeds of your network), a new directory called _drools_cep_ should be created.
 . cd drools_cep
+. mvn -v
++
+-----
+$ mvn -v
+Apache Maven 3.3.1 (cab6659f9874fa96462afef40fcf6bc033d58c1c; 2015-03-13T14:10:27-06:00)
+Maven home: /opt/apache/apache-maven-3.3.1
+Java version: 1.7.0_75, vendor: Oracle Corporation
+Java home: /usr/lib/jvm/java-1.7.0-openjdk-1.7.0.75-2.5.4.2.el7_0.x86_64/jre
+-----
++
+As mentioned in the pre-reqs, ensure use of a recent version of Maven on your $PATH (ie:  v3.2.5 or v3.3.1)
+
 . mvn clean install -DskipTests -s /path/to/repo/example-settings.xml
 +
 This command will compile and install the _drools_cep_ project.
+After a while, you should see the statement: _BUILD SUCCESS_ .<F2>
 
 == Execute Standalone CEP Test
 The new mavenized _drools_cep_ project previously created contains a JUnit test class that demonstrates use of the BRMS CEP engine.
@@ -154,6 +175,8 @@ The supported BxMS supported Maven repository includes a single bill of material
  30                 </dependencies>
  31         </dependencyManagement>
 -----
++
+This _drools-bpm_ should also be present in the _dependencyManagement_ section of your business application's maven configuration.
 
 
 ifdef::showscript[]
