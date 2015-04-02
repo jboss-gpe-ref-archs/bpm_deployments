@@ -1,4 +1,4 @@
-= *Standalone Complex Event Processing*
+= *Embedded Complex Event Processing*
 
 :data-uri:
 :toc: manual
@@ -8,7 +8,7 @@
 :cepdocs: link:https://access.redhat.com/documentation/en-US/Red_Hat_JBoss_BRMS/6.0/html-single/Development_Guide/index.html#chap-Complex_Event_Processing[complex event processing]
 :numbered:
 
-Standalone Complex Event Processing Quickstart using JBoss BRM Suite 6.1 libraries
+Embedded Complex Event Processing Quickstart using JBoss BRM Suite 6.1 libraries
 
 == Overview
 
@@ -17,7 +17,8 @@ The default deployment of this product is as a web application executing on the 
 Interaction to this _BRMS server_ is typically via its REST APIs.
 This default _BRMS server_ deployment topology is ideal for many large enterprise scenarios where it is ideal to have the rules engine centralized, optimized and configured for high-availability.
 
-Red Hat's BRMS product is, however, also fully supported when embedded directly in a business application.
+The Java libraries of Red Hat's BRMS product are, however, also fully supported when utilized outside of the default BRMS server.
+The BRMS Java libraries could alternatively be embedded directly in a business application.
 The business application would, in this case, make direct use of the {droolsjavadoc}.
 
 == Purpose
