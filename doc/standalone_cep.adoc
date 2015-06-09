@@ -39,21 +39,14 @@ In addition, the following is developer documentation on {cepdocs} using BRMS.
 Older versions of maven (tested on RHEL 7) are known to not work with this quickstart.
 
 == Configure Local BxMS Maven Repository
-This project will make use of JBoss BRMS 6.1 libraries.
-
-[NOTE]
-JBoss BRMS 6.1 is currently available as part of the _Early Adopter_ program.
-Contact your Red Hat account manager to apply to this program.
+This project will make use of JBoss BRMS 6.1 libraries which are available from the Red Hat Support Portal using your Red Hat Network userId.
 
 === Acquire Red Hat Maven Repositories
 This quickstart will make use of a supported BxMS Maven repository installed on your local workstation.
 
 In particular: *jboss-brms-bpmsuite-6.1.0.GA-maven-repository.zip*
 
-[NOTE]
-Because BRMS 6.1 is only available from the _Early Adopter_ program, request this zip of mavenized BRMS libraries from your Red Hat account manager.
-
-Once downloaded, unzip :
+Once downloaded from the Red Hat Support Portal, unzip :
 
 -----
 unzip jboss-brms-bpmsuite-6.1.0.GA-maven-repository.zip -d /path/to/repo
